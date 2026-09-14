@@ -3,8 +3,9 @@
   "IWM": {
    "entry_date": "2026-09-11",
    "signal_ibs": 0.045,
-   "bars": 0,
-   "pending": true
+   "bars": 1,
+   "pending": true,
+   "last_bar": "2026-09-11"
   }
  },
  "history": []
