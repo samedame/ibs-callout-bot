@@ -1,1 +1,36 @@
-{"holdings": {}, "last_rebalanced_month": "", "history": []}
+{
+ "holdings": {
+  "PANW": {
+   "entry_month": "2026-09"
+  },
+  "CSCO": {
+   "entry_month": "2026-09"
+  },
+  "MU": {
+   "entry_month": "2026-09"
+  },
+  "MRK": {
+   "entry_month": "2026-09"
+  },
+  "INTC": {
+   "entry_month": "2026-09"
+  },
+  "SLB": {
+   "entry_month": "2026-09"
+  },
+  "MPC": {
+   "entry_month": "2026-09"
+  },
+  "AMD": {
+   "entry_month": "2026-09"
+  },
+  "KLAC": {
+   "entry_month": "2026-09"
+  },
+  "CAT": {
+   "entry_month": "2026-09"
+  }
+ },
+ "last_rebalanced_month": "2026-09",
+ "history": []
+}
