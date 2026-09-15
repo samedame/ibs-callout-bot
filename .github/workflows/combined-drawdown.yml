@@ -1,0 +1,22 @@
+name: Combined-account drawdown monitor
+
+on:
+  workflow_dispatch:
+  # No schedule yet -- the options-bot leg isn't wired (see combined_drawdown_monitor.py).
+  # Uncomment once options_state.json is being populated from that bot:
+  # schedule:
+  #   - cron: '15 12 * * 1'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: Check combined drawdown
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python combined_drawdown_monitor.py --webhook "$DISCORD_WEBHOOK" --status
