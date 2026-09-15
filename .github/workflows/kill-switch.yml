@@ -1,0 +1,21 @@
+name: IBS bot kill-switch monitor
+
+on:
+  schedule:
+    # weekly is plenty for a rolling ~100-trade metric on a ~75-alert/yr strategy
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: Check kill-switch criteria
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python kill_switch_monitor.py --webhook "$DISCORD_WEBHOOK"
