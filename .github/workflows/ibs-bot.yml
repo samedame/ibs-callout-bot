@@ -2,9 +2,7 @@ name: IBS callout bot
 
 on:
   schedule:
-    # evening run: 21:15 UTC = 17:15 ET (EDT) / 16:15 ET (EST) -> after the close, both halves of the year
     - cron: '15 21 * * 1-5'
-    # pre-open reminder: 13:00 UTC = 09:00 ET (EDT) / 08:00 ET (EST)
     - cron: '0 13 * * 1-5'
   workflow_dispatch:
 
@@ -19,16 +17,38 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
+
       - name: Evening signal run
         if: github.event.schedule == '15 21 * * 1-5' || github.event_name == 'workflow_dispatch'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK"
-      - name: Pre-open reminder
+
+      - name: Check pre-open staleness
+        id: staleness
         if: github.event.schedule == '0 13 * * 1-5'
+        run: |
+          SCHED_TS=$(date -u -d "today 13:00" +%s)
+          NOW_TS=$(date -u +%s)
+          DELAY=$(( (NOW_TS - SCHED_TS) / 60 ))
+          echo "delay_minutes=$DELAY" >> "$GITHUB_OUTPUT"
+          echo "Fired $DELAY minutes after the 13:00 UTC schedule"
+
+      - name: Pre-open reminder (on time)
+        if: github.event.schedule == '0 13 * * 1-5' && fromJSON(steps.staleness.outputs.delay_minutes) <= 60
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK" --morning
+
+      - name: Pre-open reminder (stale — flag instead of pretending it's fresh)
+        if: github.event.schedule == '0 13 * * 1-5' && fromJSON(steps.staleness.outputs.delay_minutes) > 60
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -s -H "Content-Type: application/json" \
+            -d "{\"content\": \"⚠️ Pre-open reminder fired ${{ steps.staleness.outputs.delay_minutes }} min late (GitHub Actions scheduling delay, not a code bug). Market is likely already open — today's next-open execution window may be gone. Check state.json directly if you need to act.\"}" \
+            "$DISCORD_WEBHOOK"
+
       - name: Commit state
         run: |
           git config user.name  "ibs-bot"
