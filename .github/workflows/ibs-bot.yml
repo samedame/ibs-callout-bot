@@ -2,9 +2,32 @@ name: IBS callout bot
 
 on:
   schedule:
+    # Evening signal run (unchanged).
     - cron: '15 21 * * 1-5'
-    - cron: '0 13 * * 1-5'
+    # BACKUP for the pre-open reminder. The primary trigger is the open-scheduler Worker (09:00 ET, exact).
+    # These fire at 09:07 ET and are silenced by run_guard.py if the Worker already ran (or if off-season).
+    - cron: '7 13 * * 1-5'   # 09:07 EDT (UTC-4)
+    - cron: '7 14 * * 1-5'   # 09:07 EST (UTC-5)
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "evening = signal run, morning = pre-open reminder"
+        type: choice
+        options: [evening, morning]
+        default: evening
+      scheduled_for_et:
+        description: "Intended fire time (ET, ISO-8601). Set by open-scheduler."
+        required: false
+        default: ""
+      trigger:
+        description: "Who started this run (cf-scheduler | test | manual)"
+        required: false
+        default: "manual"
+
+# A late backup can never overlap the primary run.
+concurrency:
+  group: ibs-bot
+  cancel-in-progress: false
 
 jobs:
   run:
@@ -19,40 +42,28 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Evening signal run
-        if: github.event.schedule == '15 21 * * 1-5' || github.event_name == 'workflow_dispatch'
+        if: github.event.schedule == '15 21 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'evening')
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK"
 
-      - name: Check pre-open staleness
-        id: staleness
-        if: github.event.schedule == '0 13 * * 1-5'
-        run: |
-          SCHED_TS=$(date -u -d "today 13:00" +%s)
-          NOW_TS=$(date -u +%s)
-          DELAY=$(( (NOW_TS - SCHED_TS) / 60 ))
-          echo "delay_minutes=$DELAY" >> "$GITHUB_OUTPUT"
-          echo "Fired $DELAY minutes after the 13:00 UTC schedule"
-
-      - name: Pre-open reminder (on time)
-        if: github.event.schedule == '0 13 * * 1-5' && fromJSON(steps.staleness.outputs.delay_minutes) <= 60
+      # Replaces the old "Check pre-open staleness" + "stale" curl steps. run_guard.py does the lateness
+      # check against the INTENDED time, suppresses duplicates, and posts one clear notice if too late.
+      - name: Pre-open reminder (guarded)
+        if: github.event.schedule == '7 13 * * 1-5' || github.event.schedule == '7 14 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'morning')
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        run: python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK" --morning
-
-      - name: Pre-open reminder (stale — flag instead of pretending it's fresh)
-        if: github.event.schedule == '0 13 * * 1-5' && fromJSON(steps.staleness.outputs.delay_minutes) > 60
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          SCHEDULED_FOR_ET: ${{ inputs.scheduled_for_et }}
+          RUN_TRIGGER: ${{ inputs.trigger || github.event_name }}
         run: |
-          curl -s -H "Content-Type: application/json" \
-            -d "{\"content\": \"⚠️ Pre-open reminder fired ${{ steps.staleness.outputs.delay_minutes }} min late (GitHub Actions scheduling delay, not a code bug). Market is likely already open — today's next-open execution window may be gone. Check state.json directly if you need to act.\"}" \
-            "$DISCORD_WEBHOOK"
+          python run_guard.py --job ibs-preopen --target 09:00 --usable-until 09:29 --on-too-late notice -- \
+            python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK" --morning
 
       - name: Commit state
         run: |
           git config user.name  "ibs-bot"
           git config user.email "bot@users.noreply.github.com"
           git add state.json || true
+          git add .run_guard.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "state $(date -u +%F)"
-          git push || true
+          git push || (git pull --rebase --autostash && git push) || true
