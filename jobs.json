@@ -3,7 +3,7 @@
   "jobs": [
     {
       "id": "ibs-preopen",
-      "repo": "samedame/REPLACE_ME",
+      "repo": "samedame/ibs-callout-bot",
       "workflow": "ibs-bot.yml",
       "ref": "main",
       "at_et": "09:00",
@@ -16,13 +16,14 @@
     },
     {
       "id": "condor-entry",
-      "repo": "REPLACE_ME/REPLACE_ME",
-      "workflow": "REPLACE_ME.yml",
+      "repo": "samedame/<REPLACE_ME>",
+      "workflow": "REPLACE_ME",
       "ref": "main",
       "at_et": "09:31",
       "grace_min": 8,
       "watchdog_min": 3,
-      "fallback_message": "0DTE condor entry did not start. The window is ~9:31-9:40 ET; if you miss it, skip today (a late entry was never backtested)."
+      "fallback_message": "0DTE condor entry did not start. The window is ~9:31-9:40 ET; if you miss it, skip today (a late entry was never backtested).",
+      "enabled": false
     },
     {
       "id": "options-scan",
@@ -32,7 +33,8 @@
       "at_et": "09:45",
       "grace_min": 30,
       "watchdog_min": 5,
-      "fallback_message": "Options scanner did not start. It has no intraday timing edge, so run it by hand from the Actions tab whenever you see this."
+      "fallback_message": "Options scanner did not start. It has no intraday timing edge, so run it by hand from the Actions tab whenever you see this.",
+      "enabled": false
     },
     {
       "id": "condor-monitor",
