@@ -1,0 +1,49 @@
+{
+  "_readme": "One entry per bot run that must start at a precise ET time. at_et = the time the bot is SUPPOSED to fire (America/New_York, 24h). Run `npm run check` after editing.",
+  "jobs": [
+    {
+      "id": "ibs-preopen",
+      "repo": "samedame/REPLACE_ME",
+      "workflow": "ibs-bot.yml",
+      "ref": "main",
+      "at_et": "09:00",
+      "grace_min": 20,
+      "watchdog_min": 4,
+      "fallback_message": "IBS pre-open reminder did not start. Open state.json in the repo for today's pending orders; queue them before 9:30 ET.",
+      "inputs": {
+        "mode": "morning"
+      }
+    },
+    {
+      "id": "condor-entry",
+      "repo": "REPLACE_ME/REPLACE_ME",
+      "workflow": "REPLACE_ME.yml",
+      "ref": "main",
+      "at_et": "09:31",
+      "grace_min": 8,
+      "watchdog_min": 3,
+      "fallback_message": "0DTE condor entry did not start. The window is ~9:31-9:40 ET; if you miss it, skip today (a late entry was never backtested)."
+    },
+    {
+      "id": "options-scan",
+      "repo": "REPLACE_ME/Daily-Stock-Options-Alert",
+      "workflow": "REPLACE_ME.yml",
+      "ref": "main",
+      "at_et": "09:45",
+      "grace_min": 30,
+      "watchdog_min": 5,
+      "fallback_message": "Options scanner did not start. It has no intraday timing edge, so run it by hand from the Actions tab whenever you see this."
+    },
+    {
+      "id": "condor-monitor",
+      "enabled": false,
+      "repo": "REPLACE_ME/REPLACE_ME",
+      "workflow": "REPLACE_ME.yml",
+      "ref": "main",
+      "at_et": "09:40",
+      "until_et": "15:55",
+      "repeat_every_min": 10,
+      "_note": "OPTIONAL. Only if your condor bot polls profit-take/stop levels on a GitHub cron. Those polls drift exactly like the open alerts do. Enable and point at the polling workflow."
+    }
+  ]
+}
