@@ -1,7 +1,12 @@
 """run_guard.py - drop-in lateness + duplicate guard for GitHub-Actions bots that must act at a
 precise America/New_York time. Standard library only (Python 3.9+).
 
-Integration is two lines at the bottom of the bot's entry script:
+Two ways to integrate. (A) No code changes - wrap the command in the workflow:
+
+    python run_guard.py --job ibs-preopen --target 09:00 --usable-until 09:29 -- \
+        python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK" --morning
+
+(B) Two lines at the bottom of the bot's entry script:
 
     from run_guard import GuardConfig, run_guarded
     run_guarded(GuardConfig(job="ibs-preopen", target_et="08:30", usable_until_et="09:29"), main)
@@ -87,9 +92,9 @@ def _at(day: datetime, hhmm: str) -> datetime:
 def discord_post(text: str, webhook_url: Optional[str] = None, retries: int = 3) -> bool:
     """Best-effort Discord webhook post. Never raises. Sends a custom User-Agent because Discord's
     edge rejects the default Python-urllib one."""
-    url = webhook_url or os.environ.get("DISCORD_WEBHOOK_URL", "")
+    url = webhook_url or os.environ.get("DISCORD_WEBHOOK_URL") or os.environ.get("DISCORD_WEBHOOK", "")
     if not url:
-        print(f"[run_guard] (no DISCORD_WEBHOOK_URL) {text}", file=sys.stderr)
+        print(f"[run_guard] (no DISCORD_WEBHOOK_URL / DISCORD_WEBHOOK set) {text}", file=sys.stderr)
         return False
     body = json.dumps({"content": text[:1900]}).encode()
     for attempt in range(retries):
@@ -242,3 +247,39 @@ def run_guarded(
     result = main()
     guard.mark_done(d)
     return result
+
+
+def _cli(argv=None) -> int:
+    import argparse
+    import subprocess
+
+    ap = argparse.ArgumentParser(
+        prog="run_guard.py",
+        description="Run a command only if it is on time / not a duplicate. Everything after `--` is the command.",
+    )
+    ap.add_argument("--job", required=True)
+    ap.add_argument("--target", required=True, help="HH:MM ET the job is supposed to fire")
+    ap.add_argument("--usable-until", required=True, help="HH:MM ET after which running is pointless")
+    ap.add_argument("--on-time-min", type=int, default=10)
+    ap.add_argument("--on-too-late", choices=("notice", "run_flagged"), default="notice")
+    ap.add_argument("--state-path", default=".run_guard.json")
+    ap.add_argument("cmd", nargs=argparse.REMAINDER)
+    args = ap.parse_args(argv)
+    cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
+    if not cmd:
+        ap.error("missing command: put it after `--`")
+
+    cfg = GuardConfig(job=args.job, target_et=args.target, usable_until_et=args.usable_until,
+                      on_time_min=args.on_time_min, on_too_late=args.on_too_late, state_path=args.state_path)
+
+    def main():
+        rc = subprocess.run(cmd).returncode
+        if rc != 0:
+            raise SystemExit(rc)  # propagate failure; no marker is written, so the backup can retry
+
+    run_guarded(cfg, main)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(_cli())
