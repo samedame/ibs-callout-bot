@@ -1,12 +1,15 @@
 {
- "positions": {
-  "IWM": {
+ "positions": {},
+ "history": [
+  {
    "entry_date": "2026-09-11",
    "signal_ibs": 0.045,
-   "bars": 8,
+   "bars": 9,
    "pending": false,
-   "last_bar": "2026-09-18"
+   "last_bar": "2026-09-22",
+   "sym": "IWM",
+   "exit_signal_date": "2026-09-22",
+   "reason": "close above yesterday's high"
   }
- },
- "history": []
+ ]
 }
