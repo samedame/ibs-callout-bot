@@ -3,14 +3,16 @@
   "IWM": {
    "entry_date": "2026-09-23",
    "signal_ibs": 0.0185,
-   "bars": 0,
-   "pending": false
+   "bars": 1,
+   "pending": false,
+   "last_bar": "2026-09-24"
   },
   "DIA": {
    "entry_date": "2026-09-23",
    "signal_ibs": 0.0931,
-   "bars": 0,
-   "pending": false
+   "bars": 1,
+   "pending": false,
+   "last_bar": "2026-09-24"
   }
  },
  "history": [
