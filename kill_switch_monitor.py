@@ -143,16 +143,18 @@ def main():
     avg_trade = sum(t["ret"] for t in window) / n
     win_rate = sum(1 for t in window if t["ret"] > 0) / n
     max_dd = blended_drawdown(trades)  # drawdown uses FULL history, not just the trailing window
+    primed = n >= WINDOW  # avg-trade/win-rate are "over 100 consecutive alerts" per the verdict --
+                          # meaningless (and not gates) below that. Drawdown has no such
+                          # qualifier in the verdict, so it stays live regardless of n.
 
     breaches = []
-    if avg_trade < AVG_TRADE_FLOOR:
+    if primed and avg_trade < AVG_TRADE_FLOOR:
         breaches.append(f"avg trade {avg_trade:+.2%} over last {n} < floor {AVG_TRADE_FLOOR:.1%}")
     if max_dd > DRAWDOWN_CEILING:
         breaches.append(f"blended drawdown {max_dd:.1%} > ceiling {DRAWDOWN_CEILING:.0%}")
-    if win_rate < WIN_RATE_FLOOR:
+    if primed and win_rate < WIN_RATE_FLOOR:
         breaches.append(f"win rate {win_rate:.1%} over last {n} < floor {WIN_RATE_FLOOR:.0%}")
 
-    primed = n >= WINDOW
     summary = (f"IBS bot health -- {n} trade(s) in window (primed: {primed}), "
                f"avg trade {avg_trade:+.2%}, win rate {win_rate:.1%}, "
                f"blended drawdown {max_dd:.1%}")
@@ -163,10 +165,13 @@ def main():
                 + "\n".join(f"- {b}" for b in breaches)
                 + f"\n\n{summary}"
                 + "\n\nPer the verdict record: stop and re-test before the next signal.")
+    elif a.status and not primed:
+        text = (f"**IBS bot health check -- not enough trades yet ({n}/{WINDOW}, informational only)**\n"
+                f"{summary}")
     elif a.status:
         text = f"**IBS bot health check -- OK**\n{summary}"
     else:
-        text = None  # healthy and not asked for a status post -- stay quiet
+        text = None  # healthy (or not yet primed) and not asked for a status post -- stay quiet
 
     if text:
         print(text)
