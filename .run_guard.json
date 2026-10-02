@@ -47,5 +47,6 @@
   "late_min": 1.4,
   "status": "on_time",
   "trigger": "cf-scheduler"
- }
+ },
+ "ibs-preopen:2026-10-02:notice": "2026-10-02T14:22:21-04:00"
 }
