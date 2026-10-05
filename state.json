@@ -11,21 +11,21 @@
    "entry_date": "2026-09-30",
    "signal_ibs": 0.0622,
    "bars": 1,
-   "pending": true,
+   "pending": false,
    "last_bar": "2026-10-01"
   },
   "QQQ": {
    "entry_date": "2026-09-30",
    "signal_ibs": 0.055,
    "bars": 1,
-   "pending": true,
+   "pending": false,
    "last_bar": "2026-10-01"
   },
   "DIA": {
    "entry_date": "2026-09-30",
    "signal_ibs": 0.0361,
    "bars": 1,
-   "pending": true,
+   "pending": false,
    "last_bar": "2026-10-01"
   }
  },
