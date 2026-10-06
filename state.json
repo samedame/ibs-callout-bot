@@ -3,30 +3,16 @@
   "IWM": {
    "entry_date": "2026-09-23",
    "signal_ibs": 0.0185,
-   "bars": 7,
+   "bars": 8,
    "pending": false,
-   "last_bar": "2026-10-01"
-  },
-  "SPY": {
-   "entry_date": "2026-09-30",
-   "signal_ibs": 0.0622,
-   "bars": 1,
-   "pending": false,
-   "last_bar": "2026-10-01"
-  },
-  "QQQ": {
-   "entry_date": "2026-09-30",
-   "signal_ibs": 0.055,
-   "bars": 1,
-   "pending": false,
-   "last_bar": "2026-10-01"
+   "last_bar": "2026-10-05"
   },
   "DIA": {
    "entry_date": "2026-09-30",
    "signal_ibs": 0.0361,
-   "bars": 1,
+   "bars": 2,
    "pending": false,
-   "last_bar": "2026-10-01"
+   "last_bar": "2026-10-05"
   }
  },
  "history": [
@@ -48,6 +34,26 @@
    "last_bar": "2026-09-25",
    "sym": "DIA",
    "exit_signal_date": "2026-09-25",
+   "reason": "close above yesterday's high"
+  },
+  {
+   "entry_date": "2026-09-30",
+   "signal_ibs": 0.0622,
+   "bars": 2,
+   "pending": false,
+   "last_bar": "2026-10-05",
+   "sym": "SPY",
+   "exit_signal_date": "2026-10-06",
+   "reason": "close above yesterday's high"
+  },
+  {
+   "entry_date": "2026-09-30",
+   "signal_ibs": 0.055,
+   "bars": 2,
+   "pending": false,
+   "last_bar": "2026-10-05",
+   "sym": "QQQ",
+   "exit_signal_date": "2026-10-06",
    "reason": "close above yesterday's high"
   }
  ]
