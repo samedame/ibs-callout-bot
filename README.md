@@ -29,7 +29,7 @@ Sharpe ≈ 0.97–1.01, CAGR ≈ 13.7–15%, max drawdown ≈ −18%, ~75 alerts
 
 | When | Message | What you do |
 |---|---|---|
-| ~5:15 PM ET (3:15 PM MT) after the close | **IBS callout bot — signals from the <day> close**: a BUY list, a SELL list, and a table of all four ETFs | Nothing yet. This is the plan for the next open. |
+| Evening. Scheduled for 5:15 PM ET (3:15 PM MT), but GitHub's own scheduler has been starting it between about 8 and 10:30 PM ET (6 and 8:30 PM MT) | **IBS callout bot — signals from the <day> close**: a BUY list, a SELL list, and a table of all four ETFs | Nothing yet. This is the plan for the next open. |
 | 9:00 AM ET (7:00 AM MT) | **Pre-open reminder**: the same orders (SELL list first, then BUY list) plus what you're holding | Place the orders as market-on-open before the 9:30 AM ET (7:30 AM MT) open. Skip a trade if you can't. |
 
 - **SELL** = sell the whole position. **BUY** = 25% of the bot's capital per ETF, one sleeve each, never add to a sleeve you already hold.
