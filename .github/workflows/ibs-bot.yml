@@ -41,6 +41,8 @@ jobs:
           python-version: '3.11'
       - run: pip install -r requirements.txt
 
+      # Exit code 1 = the run could not deliver (price data never caught up, Discord refused the message, no webhook).
+      # The bot says why in Discord itself when it can; the last step below covers the rest.
       - name: Evening signal run
         if: github.event.schedule == '15 21 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'evening')
         env:
@@ -56,14 +58,32 @@ jobs:
           SCHEDULED_FOR_ET: ${{ inputs.scheduled_for_et }}
           RUN_TRIGGER: ${{ inputs.trigger || github.event_name }}
         run: |
-          python run_guard.py --job ibs-preopen --target 09:00 --usable-until 09:29 --on-too-late notice -- \
+          python run_guard.py --job ibs-preopen --target 09:00 --usable-until 09:29 --on-too-late notice \
+            --too-late-hint "Today's orders are in last night's IBS message, and in state.json (BUYs: positions with pending true; SELLs: pending_exits). If the 9:30 AM ET open has passed, check the price before placing them." -- \
             python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK" --morning
 
+      # always(): the evening step saves state.json BEFORE it posts, then exits 1 if the post failed. The orders must
+      # still be committed, or the 9:00 AM reminder has nothing to repeat.
       - name: Commit state
+        if: always()
         run: |
           git config user.name  "ibs-bot"
           git config user.email "bot@users.noreply.github.com"
           git add state.json || true
           git add .run_guard.json 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "state $(date -u +%F)"
-          git push || (git pull --rebase --autostash && git push) || true
+          if ! git diff --cached --quiet; then
+            git commit -m "state $(date -u +%F)"
+            ok=0
+            for i in 1 2 3 4 5; do
+              if git pull --rebase --autostash && git push; then ok=1; break; fi
+              echo "push attempt $i failed; retrying"; sleep $((i * 3))
+            done
+            [ "$ok" = 1 ] || { echo "could not push state after 5 attempts"; exit 1; }
+          fi
+
+      - name: Tell Discord if this run failed
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python notify_failure.py "IBS callout bot"

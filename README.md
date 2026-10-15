@@ -25,6 +25,32 @@ Sharpe ≈ 0.97–1.01, CAGR ≈ 13.7–15%, max drawdown ≈ −18%, ~75 alerts
 
 `state.json` tracks open sleeves so exits can be signalled; the workflow commits it back to the repo.
 
+## The two messages, and what to do with each
+
+| When | Message | What you do |
+|---|---|---|
+| Evening. Scheduled for 5:15 PM ET (3:15 PM MT), but GitHub's own scheduler has been starting it between about 8 and 10:30 PM ET (6 and 8:30 PM MT) | **IBS callout bot — signals from the <day> close**: a BUY list, a SELL list, and a table of all four ETFs | Nothing yet. This is the plan for the next open. |
+| 9:00 AM ET (7:00 AM MT) | **Pre-open reminder**: the same orders (SELL list first, then BUY list) plus what you're holding | Place the orders as market-on-open before the 9:30 AM ET (7:30 AM MT) open. Skip a trade if you can't. |
+
+- **SELL** = sell the whole position. **BUY** = 25% of the bot's capital per ETF, one sleeve each, never add to a sleeve you already hold.
+- "held N/10 days" counts the sessions after the signal close. At 10 the bot sells even if the price hasn't popped.
+- No evening message **and** no warning means the run didn't happen, not "no trade". A failed run now says so in Discord
+  (`notify_failure.py`), and a missing price file produces a **NO SIGNALS** message instead of old signals.
+- The pre-open reminder repeats SELLs/BUYs from `state.json` (`positions[*].pending`, `pending_exits`), so it still works if the
+  evening message never arrived.
+
+How it behaves on bad days (all covered by `tests/`):
+
+- Price data not final yet after the close (Yahoo lists the day with no close for a while): it looks again every 5 minutes for
+  ~15 minutes, then posts **NO SIGNALS** and exits with an error (red run) without changing anything.
+- Run twice for the same close: the second run does nothing (or re-sends the saved message after a failed post;
+  `--force` re-sends it anyway).
+- Market holidays: no evening evaluation, no pre-open reminder. Holiday list in `ibs_callout_bot.py` (`HOLIDAYS`) runs to 2027;
+  extend it each year.
+- Discord down or webhook missing: orders are still saved first, the run fails loudly, the 9:00 AM reminder repeats them.
+
+Run the tests with `python -m pytest tests -q` (needs `pip install pandas pytest pyyaml`).
+
 ## Rules of the road
 
 - Execute at the open with market-on-open orders; skip a trade if you can't.
@@ -70,6 +96,18 @@ see the fractional-share note above.
 
 Setup: same pattern as the IBS bot (`momentum-bot.yml` workflow, same `DISCORD_WEBHOOK`
 secret). State lives in `momentum_state.json`, separate from the IBS bot's `state.json`.
+
+Behaviour notes (2026-10-14 audit): the month label is the New York date, so a late run on the evening of the last
+trading day can no longer start the next month's rebalance early on stale data; the in-progress month is never used
+as a month-end; a rebalance needs at least 95 of the 103 names scored (otherwise a **rebalance was NOT done** message,
+nothing recorded, and tomorrow's run retries); the rebalance is recorded only after Discord accepted the message.
+
+**Open question (needs a look at the research script before changing anything):** the live score is
+P(last completed month-end) / P(11 month-ends earlier) - 1, which *includes* the most recent completed month. The
+pre-registration describes the research rule as "12 months back to 1 month back" (`panel.shift(1) / panel.shift(12)` on month-end
+rows), which would *skip* it. If the research script decided on the month-end row and traded the following month, the live bot is
+shifted by one month; set `SKIP_LAST_COMPLETED_MONTH = True` in `momentum_sleeve_bot.py` to match. Left unchanged because it
+changes which stocks are picked and the sleeve is paper-only.
 
 ### 2. Kill-switch monitor (`kill_switch_monitor.py`)
 

@@ -65,6 +65,7 @@ class GuardConfig:
     on_time_min: int = 10         # <= this late counts as on time
     early_tolerance_min: int = 20  # earlier than this before target = wrong-season cron copy
     on_too_late: str = "notice"   # "notice" (post + stop) | "run_flagged" (post + run anyway)
+    too_late_hint: str = "If it still matters, act manually from your last alert."  # tail of the missed-window notice
     state_path: str = ".run_guard.json"
 
 
@@ -204,7 +205,7 @@ class RunGuard:
             return Decision(Status.TOO_LATE, True, notice="" if already else msg, note=note, **base)
         msg = (f"⚠️ {cfg.job} missed its window: scheduled {s_hm} ET, started {n_hm} ET "
                f"({late:.0f} min late; usable until {u_hm} ET; trigger: {trigger}). Skipped - nothing "
-               f"was sent for this run. If it still matters, act manually from your last alert.")
+               f"was sent for this run. {cfg.too_late_hint}")
         return Decision(Status.TOO_LATE, False, notice="" if already else msg, **base)
 
     # ---- markers -----------------------------------------------------------------------
@@ -263,6 +264,8 @@ def _cli(argv=None) -> int:
     ap.add_argument("--on-time-min", type=int, default=10)
     ap.add_argument("--on-too-late", choices=("notice", "run_flagged"), default="notice")
     ap.add_argument("--state-path", default=".run_guard.json")
+    ap.add_argument("--too-late-hint", default=GuardConfig.too_late_hint,
+                    help="last sentence of the missed-window notice")
     ap.add_argument("cmd", nargs=argparse.REMAINDER)
     args = ap.parse_args(argv)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
@@ -270,7 +273,8 @@ def _cli(argv=None) -> int:
         ap.error("missing command: put it after `--`")
 
     cfg = GuardConfig(job=args.job, target_et=args.target, usable_until_et=args.usable_until,
-                      on_time_min=args.on_time_min, on_too_late=args.on_too_late, state_path=args.state_path)
+                      on_time_min=args.on_time_min, on_too_late=args.on_too_late, state_path=args.state_path,
+                      too_late_hint=args.too_late_hint)
 
     def main():
         rc = subprocess.run(cmd).returncode
