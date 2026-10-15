@@ -17,6 +17,8 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
+      # Exit 1 = the rebalance could not be completed (too few names scored, Discord refused it). Nothing is recorded in that
+      # case, so tomorrow's daily run tries again.
       - name: Monthly rebalance check
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -26,5 +28,18 @@ jobs:
           git config user.name  "momentum-sleeve-bot"
           git config user.email "bot@users.noreply.github.com"
           git add momentum_state.json || true
-          git diff --cached --quiet || git commit -m "momentum state $(date -u +%F)"
-          git push || true
+          if ! git diff --cached --quiet; then
+            git commit -m "momentum state $(date -u +%F)"
+            ok=0
+            for i in 1 2 3 4 5; do
+              if git pull --rebase --autostash && git push; then ok=1; break; fi
+              echo "push attempt $i failed; retrying"; sleep $((i * 3))
+            done
+            [ "$ok" = 1 ] || { echo "could not push state after 5 attempts"; exit 1; }
+          fi
+      - name: Tell Discord if this run failed
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python notify_failure.py "Momentum sleeve bot"

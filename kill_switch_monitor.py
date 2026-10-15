@@ -32,6 +32,8 @@ import urllib.request
 
 import pandas as pd
 
+from ibs_callout_bot import NOTIFIED_FILE, post_discord      # shared Discord post: retries 429/5xx, raises PostFailed
+
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state.json")
 UA = {"User-Agent": "Mozilla/5.0 (compatible; ibs-kill-switch-monitor/1.0)"}
 WINDOW = 100                  # "over 100 consecutive alerts" per the verdict doc
@@ -118,28 +120,35 @@ def blended_drawdown(trades):
     return max_dd
 
 
-def post_discord(webhook, content):
-    data = json.dumps({"content": content[:1900]}).encode()
-    req = urllib.request.Request(webhook, data=data, headers={"Content-Type": "application/json", **UA})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return r.status
-
-
-def main():
+def main(argv=None, post=post_discord):
     ap = argparse.ArgumentParser()
     ap.add_argument("--webhook", default=os.environ.get("DISCORD_WEBHOOK", ""))
     ap.add_argument("--status", action="store_true", help="post a summary even with no breach")
     ap.add_argument("--dry-run", action="store_true")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
     history = load_history()
     if len(history) == 0:
         print("No closed trades yet -- nothing to check.")
-        return
+        return 0
 
     trades = estimate_trade_returns(history)
     window = trades[-WINDOW:]
     n = len(window)
+    if n == 0:
+        # Every price lookup failed (or no trade had a usable next-open). Before: ZeroDivisionError and a red run that
+        # nobody reads. This is the safety net for the whole strategy, so a blind week is worth a message.
+        text = (f"⚠️ **IBS kill-switch check could not run:** {len(history)} closed trade(s) in state.json but no price data "
+                f"to value any of them (Yahoo and Stooq both failed). Nothing was checked this week.")
+        print(text, file=sys.stderr)
+        if a.webhook and not a.dry_run:
+            try:
+                post(a.webhook, text)
+                with open(NOTIFIED_FILE, "w") as f:
+                    f.write(text[:200])
+            except Exception as e:  # noqa
+                print(f"could not post the notice either: {e}", file=sys.stderr)
+        return 1
     avg_trade = sum(t["ret"] for t in window) / n
     win_rate = sum(1 for t in window if t["ret"] > 0) / n
     max_dd = blended_drawdown(trades)  # drawdown uses FULL history, not just the trailing window
@@ -176,8 +185,13 @@ def main():
     if text:
         print(text)
         if a.webhook and not a.dry_run:
-            post_discord(a.webhook, text)
+            try:
+                post(a.webhook, text)
+            except Exception as e:  # noqa
+                print(f"Discord refused the message ({e}).", file=sys.stderr)
+                return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
