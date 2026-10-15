@@ -69,5 +69,6 @@
    "exit_signal_date": "2026-10-08",
    "reason": "10 trading days held"
   }
- ]
+ ],
+ "pending_exits": {}
 }
