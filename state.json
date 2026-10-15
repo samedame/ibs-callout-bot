@@ -1,13 +1,5 @@
 {
- "positions": {
-  "IWM": {
-   "entry_date": "2026-10-12",
-   "signal_ibs": 0.0815,
-   "bars": 2,
-   "pending": false,
-   "last_bar": "2026-10-14"
-  }
- },
+ "positions": {},
  "history": [
   {
    "entry_date": "2026-09-11",
@@ -68,7 +60,29 @@
    "sym": "IWM",
    "exit_signal_date": "2026-10-08",
    "reason": "10 trading days held"
+  },
+  {
+   "entry_date": "2026-10-12",
+   "signal_ibs": 0.0815,
+   "bars": 3,
+   "pending": false,
+   "last_bar": "2026-10-15",
+   "sym": "IWM",
+   "exit_signal_date": "2026-10-15",
+   "reason": "close above yesterday's high"
   }
  ],
- "pending_exits": {}
+ "pending_exits": {
+  "IWM": {
+   "why": "close above yesterday's high",
+   "signal_bar": "2026-10-15",
+   "entry_date": "2026-10-12",
+   "held": 3
+  }
+ },
+ "last_bar": "2026-10-15",
+ "last_evening": {
+  "bar": "2026-10-15",
+  "text": "**IBS callout bot \u2014 signals from the Thu Oct 15 close**\n\n__SELL at the Fri Oct 16 open__ (market-on-open, the whole position):\n\u2022 **IWM** \u2014 close above yesterday's high (bought at the Tue Oct 13 open, held 3 days)\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Fri Oct 16.\n\n```\nSPY: close 771.79  IBS 0.87\nQQQ: close 728.00  IBS 0.90\nIWM: close 275.08  IBS 0.97  [SELL signal]\nDIA: close 521.18  IBS 0.88\n```"
+ }
 }
