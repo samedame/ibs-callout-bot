@@ -32,6 +32,7 @@ import urllib.request
 
 import pandas as pd
 
+import tradier
 from ibs_callout_bot import NOTIFIED_FILE, post_discord      # shared Discord post: retries 429/5xx, raises PostFailed
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state.json")
@@ -68,8 +69,20 @@ def fetch_stooq(ticker, days=1100):
     return df[["open", "close"]].tail(days + 5)
 
 
+def fetch_tradier(ticker, days=1100):
+    return tradier.daily_bars(ticker, days=days)[["open", "close"]]
+
+
+def data_sources():
+    """Tradier first when a key is configured; Yahoo / Stooq stay as fallbacks."""
+    src = [fetch_yahoo, fetch_stooq]
+    if tradier.configured():
+        src.insert(0, fetch_tradier)
+    return src
+
+
 def get_bars(ticker):
-    for fn in (fetch_yahoo, fetch_stooq):
+    for fn in data_sources():
         try:
             df = fn(ticker)
             if len(df) > 20:

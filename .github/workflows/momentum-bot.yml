@@ -22,6 +22,8 @@ jobs:
       - name: Monthly rebalance check
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
+          TRADIER_BASE_URL: ${{ secrets.TRADIER_BASE_URL }}
         run: python momentum_sleeve_bot.py --webhook "$DISCORD_WEBHOOK"
       - name: Commit state
         run: |

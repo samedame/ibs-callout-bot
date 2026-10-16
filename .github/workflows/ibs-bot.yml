@@ -47,6 +47,8 @@ jobs:
         if: github.event.schedule == '15 21 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'evening')
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
+          TRADIER_BASE_URL: ${{ secrets.TRADIER_BASE_URL }}
         run: python ibs_callout_bot.py --webhook "$DISCORD_WEBHOOK"
 
       # Replaces the old "Check pre-open staleness" + "stale" curl steps. run_guard.py does the lateness
@@ -55,6 +57,8 @@ jobs:
         if: github.event.schedule == '7 13 * * 1-5' || github.event.schedule == '7 14 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'morning')
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
+          TRADIER_BASE_URL: ${{ secrets.TRADIER_BASE_URL }}
           SCHEDULED_FOR_ET: ${{ inputs.scheduled_for_et }}
           RUN_TRIGGER: ${{ inputs.trigger || github.event_name }}
         run: |
