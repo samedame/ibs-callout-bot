@@ -18,6 +18,8 @@ jobs:
       - name: Check kill-switch criteria
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
+          TRADIER_BASE_URL: ${{ secrets.TRADIER_BASE_URL }}
         run: python kill_switch_monitor.py --webhook "$DISCORD_WEBHOOK"
       - name: Tell Discord if this run failed
         if: failure()

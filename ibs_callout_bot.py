@@ -38,6 +38,8 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+import tradier
+
 TICKERS = ["SPY", "QQQ", "IWM", "DIA"]
 IBS_ENTRY = 0.10
 MAX_HOLD_DAYS = 10
@@ -137,6 +139,20 @@ def fetch_stooq(ticker, days=90):
     return df[["open", "high", "low", "close"]].tail(days + 5)
 
 
+def fetch_tradier(ticker, days=90):
+    """Daily OHLC from Tradier (needs the TRADIER_API_KEY secret; see tradier.py)."""
+    return tradier.daily_bars(ticker, days=days)
+
+
+def data_sources():
+    """Price sources in the order they are tried. Tradier goes first when a key is configured; Yahoo and Stooq stay
+    as fallbacks so a Tradier outage or a bad key never silences the bot."""
+    src = [("yahoo", fetch_yahoo), ("stooq", fetch_stooq)]
+    if tradier.configured():
+        src.insert(0, ("tradier", fetch_tradier))
+    return src
+
+
 def trim_to(df, last_date):
     """Drop bars dated after `last_date` (a run before the close would otherwise see today's still-forming bar)."""
     return df[df.index.date <= last_date]
@@ -150,7 +166,7 @@ def get_bars(ticker, expected=None):
     """Daily bars for `ticker`. With `expected` (a date) the first source whose newest bar IS that session wins; if
     none has it, the freshest one is returned and the caller decides what a stale file means."""
     errs, best = [], None
-    for name, fn in (("yahoo", fetch_yahoo), ("stooq", fetch_stooq)):
+    for name, fn in data_sources():
         try:
             df = fn(ticker)
         except Exception as e:  # noqa

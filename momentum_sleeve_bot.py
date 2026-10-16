@@ -44,6 +44,8 @@ import urllib.request
 
 import pandas as pd
 
+import tradier
+
 # Shared with the IBS bot (same repo): New York clock, NYSE calendar, Discord post with retries.
 from ibs_callout_bot import (NOTIFIED_FILE, expected_last_session, fmt_day, next_session, now_et, parse_now,
                              post_discord, prev_session)
@@ -96,8 +98,20 @@ def fetch_stooq(ticker, days=420):
     return df[["close"]].tail(days + 30)
 
 
+def fetch_tradier(ticker, days=420):
+    return tradier.daily_bars(ticker, days=days)[["close"]]
+
+
+def data_sources():
+    """Tradier first when a key is configured; Yahoo / Stooq stay as fallbacks."""
+    src = [("yahoo", fetch_yahoo), ("stooq", fetch_stooq)]
+    if tradier.configured():
+        src.insert(0, ("tradier", fetch_tradier))
+    return src
+
+
 def get_closes(ticker, attempts=2, sleep=time.sleep):
-    for name, fn in (("yahoo", fetch_yahoo), ("stooq", fetch_stooq)):
+    for name, fn in data_sources():
         for i in range(attempts):
             try:
                 df = fn(ticker)
