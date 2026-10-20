@@ -3,8 +3,9 @@
   "IWM": {
    "entry_date": "2026-10-16",
    "signal_ibs": 0.0936,
-   "bars": 0,
-   "pending": false
+   "bars": 1,
+   "pending": false,
+   "last_bar": "2026-10-19"
   }
  },
  "history": [
@@ -80,9 +81,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-10-16",
+ "last_bar": "2026-10-19",
  "last_evening": {
-  "bar": "2026-10-16",
-  "text": "**IBS callout bot \u2014 signals from the Fri Oct 16 close**\n\n__BUY at the Mon Oct 19 open__ (market-on-open, 25% of the bot's capital per ETF):\n\u2022 **IWM** \u2014 IBS 0.09, close 270.44\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Mon Oct 19.\n\n```\nSPY: close 763.25  IBS 0.21\nQQQ: close 709.80  IBS 0.14\nIWM: close 270.44  IBS 0.09  [BUY signal]\nDIA: close 519.10  IBS 0.19\n```"
+  "bar": "2026-10-19",
+  "text": "**IBS callout bot \u2014 signals from the Mon Oct 19 close**\n\nNo action at the Tue Oct 20 open.\n\n```\nSPY: close 766.48  IBS 0.14\nQQQ: close 718.36  IBS 0.22\nIWM: close 271.28  IBS 0.29  [in position, held 1/10 days]\nDIA: close 518.92  IBS 0.42\n```"
  }
 }
