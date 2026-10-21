@@ -82,14 +82,7 @@
    "reason": "close above yesterday's high"
   }
  ],
- "pending_exits": {
-  "IWM": {
-   "why": "close above yesterday's high",
-   "signal_bar": "2026-10-20",
-   "entry_date": "2026-10-16",
-   "held": 2
-  }
- },
+ "pending_exits": {},
  "last_bar": "2026-10-20",
  "last_evening": {
   "bar": "2026-10-20",
