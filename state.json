@@ -83,9 +83,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-10-26",
+ "last_bar": "2026-10-27",
  "last_evening": {
-  "bar": "2026-10-26",
-  "text": "**IBS callout bot \u2014 signals from the Mon Oct 26 close**\n\nNo action at the Tue Oct 27 open.\n\n```\nSPY: close 765.37  IBS 0.61\nQQQ: close 712.20  IBS 0.68\nIWM: close 276.99  IBS 0.36\nDIA: close 522.97  IBS 0.28\n```"
+  "bar": "2026-10-27",
+  "text": "**IBS callout bot \u2014 signals from the Tue Oct 27 close**\n\nNo action at the Wed Oct 28 open.\n\n```\nSPY: close 769.66  IBS 0.75\nQQQ: close 721.25  IBS 0.83\nIWM: close 280.18  IBS 0.94\nDIA: close 523.28  IBS 0.61\n```"
  }
 }
