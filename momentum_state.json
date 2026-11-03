@@ -3,19 +3,10 @@
   "PANW": {
    "entry_month": "2026-09"
   },
-  "CSCO": {
-   "entry_month": "2026-09"
-  },
   "MU": {
    "entry_month": "2026-09"
   },
-  "MRK": {
-   "entry_month": "2026-09"
-  },
   "INTC": {
-   "entry_month": "2026-09"
-  },
-  "SLB": {
    "entry_month": "2026-09"
   },
   "MPC": {
@@ -24,13 +15,48 @@
   "AMD": {
    "entry_month": "2026-09"
   },
-  "KLAC": {
-   "entry_month": "2026-09"
+  "CVX": {
+   "entry_month": "2026-11"
   },
-  "CAT": {
-   "entry_month": "2026-09"
+  "TXN": {
+   "entry_month": "2026-11"
+  },
+  "ADI": {
+   "entry_month": "2026-11"
+  },
+  "HUM": {
+   "entry_month": "2026-11"
+  },
+  "XOM": {
+   "entry_month": "2026-11"
   }
  },
- "last_rebalanced_month": "2026-10",
- "history": []
+ "last_rebalanced_month": "2026-11",
+ "history": [
+  {
+   "sym": "KLAC",
+   "entry_month": "2026-09",
+   "exit_month": "2026-11"
+  },
+  {
+   "sym": "CSCO",
+   "entry_month": "2026-09",
+   "exit_month": "2026-11"
+  },
+  {
+   "sym": "MRK",
+   "entry_month": "2026-09",
+   "exit_month": "2026-11"
+  },
+  {
+   "sym": "CAT",
+   "entry_month": "2026-09",
+   "exit_month": "2026-11"
+  },
+  {
+   "sym": "SLB",
+   "entry_month": "2026-09",
+   "exit_month": "2026-11"
+  }
+ ]
 }
