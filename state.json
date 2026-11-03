@@ -4,25 +4,25 @@
    "entry_date": "2026-11-02",
    "signal_ibs": 0.0408,
    "bars": 0,
-   "pending": true
+   "pending": false
   },
   "QQQ": {
    "entry_date": "2026-11-02",
    "signal_ibs": 0.0398,
    "bars": 0,
-   "pending": true
+   "pending": false
   },
   "IWM": {
    "entry_date": "2026-11-02",
    "signal_ibs": 0.0603,
    "bars": 0,
-   "pending": true
+   "pending": false
   },
   "DIA": {
    "entry_date": "2026-11-02",
    "signal_ibs": 0.0334,
    "bars": 0,
-   "pending": true
+   "pending": false
   }
  },
  "history": [
