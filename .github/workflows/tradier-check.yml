@@ -1,0 +1,24 @@
+name: Tradier check (manual)
+
+# Manual only. Posts nothing to Discord and writes nothing. Runs ./tradier_check.py with this repo's own
+# TRADIER_API_KEY / TRADIER_BASE_URL secrets and fails (red X) if the key is rejected, the host is sandbox
+# (about 15 min delayed), or quotes are stale while the market is open.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Live-data check
+        env:
+          TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
+          TRADIER_BASE_URL: ${{ secrets.TRADIER_BASE_URL }}
+        run: python ./tradier_check.py
