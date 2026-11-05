@@ -122,32 +122,7 @@
    "reason": "close above yesterday's high"
   }
  ],
- "pending_exits": {
-  "SPY": {
-   "why": "close above yesterday's high",
-   "signal_bar": "2026-11-04",
-   "entry_date": "2026-11-02",
-   "held": 2
-  },
-  "QQQ": {
-   "why": "close above yesterday's high",
-   "signal_bar": "2026-11-04",
-   "entry_date": "2026-11-02",
-   "held": 2
-  },
-  "IWM": {
-   "why": "close above yesterday's high",
-   "signal_bar": "2026-11-04",
-   "entry_date": "2026-11-02",
-   "held": 2
-  },
-  "DIA": {
-   "why": "close above yesterday's high",
-   "signal_bar": "2026-11-04",
-   "entry_date": "2026-11-02",
-   "held": 2
-  }
- },
+ "pending_exits": {},
  "last_bar": "2026-11-04",
  "last_evening": {
   "bar": "2026-11-04",
