@@ -1,5 +1,30 @@
 {
- "positions": {},
+ "positions": {
+  "SPY": {
+   "entry_date": "2026-11-05",
+   "signal_ibs": 0.0087,
+   "bars": 0,
+   "pending": true
+  },
+  "QQQ": {
+   "entry_date": "2026-11-05",
+   "signal_ibs": 0.0,
+   "bars": 0,
+   "pending": true
+  },
+  "IWM": {
+   "entry_date": "2026-11-05",
+   "signal_ibs": 0.0324,
+   "bars": 0,
+   "pending": true
+  },
+  "DIA": {
+   "entry_date": "2026-11-05",
+   "signal_ibs": 0.0062,
+   "bars": 0,
+   "pending": true
+  }
+ },
  "history": [
   {
    "entry_date": "2026-09-11",
@@ -123,9 +148,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-11-04",
+ "last_bar": "2026-11-05",
  "last_evening": {
-  "bar": "2026-11-04",
-  "text": "**IBS callout bot \u2014 signals from the Wed Nov 4 close**\n\n__SELL at the Thu Nov 5 open__ (market-on-open, the whole position):\n\u2022 **SPY** \u2014 close above yesterday's high (bought at the Tue Nov 3 open, held 2 days)\n\u2022 **QQQ** \u2014 close above yesterday's high (bought at the Tue Nov 3 open, held 2 days)\n\u2022 **IWM** \u2014 close above yesterday's high (bought at the Tue Nov 3 open, held 2 days)\n\u2022 **DIA** \u2014 close above yesterday's high (bought at the Tue Nov 3 open, held 2 days)\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Thu Nov 5.\n\n```\nSPY: close 766.81  IBS 0.32  [SELL signal]\nQQQ: close 691.95  IBS 0.30  [SELL signal]\nIWM: close 284.02  IBS 0.56  [SELL signal]\nDIA: close 533.11  IBS 0.84  [SELL signal]\n```"
+  "bar": "2026-11-05",
+  "text": "**IBS callout bot \u2014 signals from the Thu Nov 5 close**\n\n__BUY at the Fri Nov 6 open__ (market-on-open, 25% of the bot's capital per ETF):\n\u2022 **SPY** \u2014 IBS 0.01, close 733.00\n\u2022 **QQQ** \u2014 IBS 0.00, close 647.05\n\u2022 **IWM** \u2014 IBS 0.03, close 270.98\n\u2022 **DIA** \u2014 IBS 0.01, close 514.27\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Fri Nov 6.\n\n```\nSPY: close 733.00  IBS 0.01  [BUY signal]\nQQQ: close 647.05  IBS 0.00  [BUY signal]\nIWM: close 270.98  IBS 0.03  [BUY signal]\nDIA: close 514.27  IBS 0.01  [BUY signal]\n```"
  }
 }
