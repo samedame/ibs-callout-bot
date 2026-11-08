@@ -669,5 +669,176 @@ class Main(Env):
         self.assertIn("No orders today.", out.getvalue())
 
 
+# ----------------------------------------------------------------------------- ADX context (informational only)
+
+def reference_adx(h, l, c, n=14):
+    """Plain-python Wilder ADX written separately from the bot's version (same definition as the 2026-11-08 study)."""
+    N = len(c)
+    tr, pdm, mdm = [0.0] * N, [0.0] * N, [0.0] * N
+    for i in range(1, N):
+        up, dn = h[i] - h[i - 1], l[i - 1] - l[i]
+        pdm[i] = up if (up > dn and up > 0) else 0.0
+        mdm[i] = dn if (dn > up and dn > 0) else 0.0
+        tr[i] = max(h[i] - l[i], abs(h[i] - c[i - 1]), abs(l[i] - c[i - 1]))
+    st, sp, sm = sum(tr[1:n + 1]), sum(pdm[1:n + 1]), sum(mdm[1:n + 1])
+    dx, adx = [], None
+    for i in range(n, N):
+        if i > n:
+            st, sp, sm = st - st / n + tr[i], sp - sp / n + pdm[i], sm - sm / n + mdm[i]
+        pdi, mdi = 100 * sp / st, 100 * sm / st
+        d = 100 * abs(pdi - mdi) / (pdi + mdi) if pdi + mdi > 0 else 0.0
+        if adx is None:
+            dx.append(d)
+            if len(dx) == n:
+                adx = sum(dx) / n
+        else:
+            adx = (adx * (n - 1) + d) / n
+    return adx, pdi, mdi
+
+
+def walk(n=120, seed=3, drift=0.0, end=D(2026, 10, 14)):
+    """A reproducible random walk with realistic highs/lows (decimals, so moves are rarely tied)."""
+    rng = np.random.default_rng(seed)
+    close = 1000 + np.cumsum(rng.normal(drift, 1.0, n))
+    open_ = np.r_[close[0], close[:-1]] + rng.normal(0, 0.2, n)
+    high = np.maximum(open_, close) + rng.uniform(0.1, 1.0, n)
+    low = np.minimum(open_, close) - rng.uniform(0.1, 1.0, n)
+    idx = pd.bdate_range(end=pd.Timestamp(end), periods=n)
+    return pd.DataFrame({"open": open_, "high": high, "low": low, "close": close}, index=idx)
+
+
+class AdxInfo(unittest.TestCase):
+    def test_matches_an_independent_reference(self):
+        for seed, drift in ((1, 0.0), (2, 0.6), (3, -0.6)):
+            df = walk(seed=seed, drift=drift)
+            a = bot.adx_info(df)
+            ref = reference_adx(df.high.tolist(), df.low.tolist(), df.close.tolist())
+            self.assertAlmostEqual(a["adx"], ref[0], places=9)
+            self.assertAlmostEqual(a["pdi"], ref[1], places=9)
+            self.assertAlmostEqual(a["mdi"], ref[2], places=9)
+
+    def test_only_bars_up_to_the_signal_close_are_used(self):
+        df = walk()
+        a_now = bot.adx_info(df.iloc[:-5])
+        df2 = df.copy()
+        df2.iloc[-5:, df2.columns.get_loc("high")] += 50          # later bars cannot change an earlier reading
+        self.assertEqual(bot.adx_info(df2.iloc[:-5]), a_now)
+
+    def test_a_strong_downtrend_reads_high_adx_with_minus_di_ahead(self):
+        a = bot.adx_info(walk(drift=-1.5, seed=5))
+        self.assertGreater(a["adx"], bot.ADX_NOTE_LEVEL)
+        self.assertGreater(a["mdi"], a["pdi"])
+
+    def test_needs_28_bars(self):
+        df = walk(n=60)
+        self.assertIsNone(bot.adx_info(df.iloc[-27:]))
+        self.assertIsNotNone(bot.adx_info(df.iloc[-28:]))
+
+    def test_flat_market_is_zero_not_an_error(self):
+        a = bot.adx_info(bars(D(2026, 10, 14), n=60))              # every bar identical: no directional movement at all
+        self.assertEqual((a["adx"], a["pdi"], a["mdi"]), (0.0, 0.0, 0.0))
+
+    def test_bad_data_gives_none_never_an_exception(self):
+        df = walk()
+        df.iloc[-3, df.columns.get_loc("high")] = np.nan
+        self.assertIsNone(bot.adx_info(df))
+        zero = pd.DataFrame({"open": 5.0, "high": 5.0, "low": 5.0, "close": 5.0}, index=walk().index)   # no range at all
+        self.assertIsNone(bot.adx_info(zero))
+        self.assertIsNone(bot.adx_info(pd.DataFrame({"close": [1.0] * 40})))       # missing columns
+
+    def test_label(self):
+        self.assertEqual(bot.adx_label({"adx": 30.6, "pdi": 12.2, "mdi": 28.4}), "ADX 31 (+DI 12, -DI 28)")
+        self.assertEqual(bot.adx_label(None), "")
+
+    def test_history_fetch_window_is_long_enough_for_adx_to_settle(self):
+        import inspect
+        for fn in (bot.fetch_yahoo, bot.fetch_stooq, bot.fetch_tradier):
+            self.assertEqual(inspect.signature(fn).parameters["days"].default, bot.HISTORY_DAYS)
+        self.assertGreaterEqual(bot.HISTORY_DAYS, 300)
+
+
+class AdxInAlerts(Env):
+    NOW = at(2026, 10, 14, 17, 15)
+    EXP = D(2026, 10, 14)
+
+    def trending(self, **by_ticker):
+        """Four falling-trend universes whose last bar is a dip (IBS < 0.10) for the tickers in `by_ticker`."""
+        out = {}
+        for i, t in enumerate(bot.TICKERS):
+            df = walk(drift=-1.2, seed=10 + i, end=self.EXP)
+            if t in by_ticker:
+                prev_low = df.low.iloc[-2]
+                df.iloc[-1, [df.columns.get_loc(k) for k in ("high", "low", "close")]] = [prev_low + 1.0, prev_low - 3.0, prev_low - 2.9]
+            out[t] = df
+        return out
+
+    def test_signals_are_identical_whatever_adx_says(self):
+        data = self.trending(SPY=1, IWM=1)
+        st = {"positions": {"DIA": {"entry_date": "2026-10-12", "bars": 1, "pending": False}}, "history": []}
+        base = None
+        for fake in (None, {"adx": 5.0, "pdi": 30.0, "mdi": 5.0}, {"adx": 80.0, "pdi": 2.0, "mdi": 60.0}):
+            with mock.patch.object(bot, "adx_info", return_value=fake):
+                ev = bot.evaluate(st, data, self.EXP)
+            key = ([b["sym"] for b in ev["buys"]], [s["sym"] for s in ev["sells"]], [(r["sym"], r["signal"]) for r in ev["rows"]])
+            base = base or key
+            self.assertEqual(key, base)
+
+    def test_buy_alert_shows_adx_and_table_has_it_for_all_four(self):
+        data = self.trending(SPY=1)
+        self.assertEqual(self.evening(self.NOW, data), 0)
+        text = self.posts[0]
+        spy = data["SPY"]
+        a = reference_adx(spy.high.tolist(), spy.low.tolist(), spy.close.tolist())
+        self.assertIn(f"**SPY** — IBS ", text)
+        self.assertIn(f"ADX {a[0]:.0f} (+DI {a[1]:.0f}, -DI {a[2]:.0f})", text)
+        table = text.split("```")[1]
+        self.assertEqual(table.count("| ADX "), 4)
+        self.assertIn("[BUY signal]  | ADX", table)
+        self.assertIn("context only, not a filter", text)
+        self.assertLess(len(text), 1900)                        # Discord cuts at 1900
+
+    def test_no_buy_means_no_adx_footnote(self):
+        self.evening(self.NOW, universe(self.EXP))              # nothing signals, but the table still carries ADX
+        self.assertNotIn("context only", self.posts[0])
+        self.assertEqual(self.posts[0].split("```")[1].count("| ADX "), 4)
+
+    def test_alert_still_goes_out_when_adx_cannot_be_computed(self):
+        data = {t: bars(self.EXP, n=24) for t in bot.TICKERS}      # too short for ADX (the old 90-day window was fine for this)
+        data["SPY"] = bars(self.EXP, n=24, last=DIP)
+        self.assertEqual(self.evening(self.NOW, data), 0)
+        text = self.posts[0]
+        self.assertIn("**SPY** — IBS 0.05, close 99.10", text)
+        self.assertNotIn("ADX", text)
+
+    def test_buy_stores_adx_at_the_signal_and_it_reaches_history_and_the_reminder(self):
+        data = self.trending(SPY=1)
+        self.evening(self.NOW, data)
+        pos = self.saved()["positions"]["SPY"]
+        a = bot.adx_info(data["SPY"])
+        self.assertEqual((pos["signal_adx"], pos["signal_pdi"], pos["signal_mdi"]),
+                         (round(a["adx"], 2), round(a["pdi"], 2), round(a["mdi"], 2)))
+        self.assertEqual(pos["entry_date"], "2026-10-14")
+        self.assertTrue(pos["pending"])
+        # the existing fields are unchanged
+        self.assertEqual(set(pos) - {"signal_adx", "signal_pdi", "signal_mdi"}, {"entry_date", "signal_ibs", "bars", "pending"})
+        self.morning(at(2026, 10, 15, 9, 0))
+        self.assertIn(f"**SPY** (ADX {pos['signal_adx']:.0f})", self.posts[-1])
+
+    def test_sell_moves_the_signal_adx_into_history(self):
+        st = {"positions": {"IWM": {"entry_date": "2026-10-08", "signal_ibs": 0.04, "signal_adx": 31.2, "signal_pdi": 11.0,
+                                    "signal_mdi": 27.5, "bars": 3, "pending": False}}, "history": []}
+        ev = bot.evaluate(st, universe(self.EXP, IWM=POP), self.EXP)
+        bot.apply_changes(st, ev)
+        h = st["history"][-1]
+        self.assertEqual((h["sym"], h["signal_adx"], h["signal_pdi"], h["signal_mdi"]), ("IWM", 31.2, 11.0, 27.5))
+        self.assertNotIn("IWM", st["positions"])
+
+    def test_old_positions_without_adx_still_work(self):
+        self.write({"positions": {"IWM": {"entry_date": "2026-10-12", "signal_ibs": 0.08, "bars": 1, "pending": True}}, "history": []})
+        self.morning(at(2026, 10, 13, 9, 0))
+        self.assertIn("**IWM**", self.posts[-1])
+        self.assertNotIn("ADX", self.posts[-1])
+
+
 if __name__ == "__main__":
     unittest.main()

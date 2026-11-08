@@ -51,6 +51,29 @@ How it behaves on bad days (all covered by `tests/`):
 
 Run the tests with `python -m pytest tests -q` (needs `pip install pandas pytest pyyaml`).
 
+## ADX context (added 2026-11-08) — information only, the rules did not change
+
+Each evening message now shows **ADX(14), +DI and -DI** of the signal close: on every BUY line (`ADX 31 (+DI 12, -DI 28)`),
+as a column in the four-ETF table, and in the pre-open reminder's BUY list. When a BUY is in the message, a one-line note says
+it is context, not a filter. **Nothing about entry, exit, sizing or universe depends on it** (`tests/` checks that the signals are
+identical whatever the ADX values are), and a failure to compute it (fewer than 28 bars, bad data) just leaves it out.
+
+Why it is shown and not used (full record: `claude/adx-backtest-verdict-2026-11-08.md` in the Personal Investor project):
+in 2,214 IBS trades 1998-2026, trades with ADX ≥ 25 at the signal close averaged **+0.85%** vs **+0.30%** below 25 (Holm p = 0.002;
+same on 19 other ETFs), but **skipping** the low-ADX trades lowered the annualised information ratio (1.45 vs 1.53) and **doubling the
+size** on high-ADX trades did not beat constant size risk-adjusted (IR difference +0.013, 95% CI −0.018 to +0.042, negative out of
+sample). So: take every BUY, same size, as before.
+
+Forward test: every new BUY stores `signal_adx`, `signal_pdi` and `signal_mdi` in `state.json` (`positions`, then `history` once it
+sells). The pre-registered plan is to wait for **40 forward trades with `signal_adx` ≥ 25** (about 18 months at ~27 a year) and only
+then re-test the size tilt on that sample. `kill_switch_monitor.py` already estimates each trade's return from `history`, so the
+two can be joined on `entry_date` and `sym`.
+
+Technical notes: the bot now fetches 365 calendar days of bars (was 90) because Wilder smoothing needs about 250 sessions to settle
+(with the old window a reading could be off by ~0.8 points); the 365-day reading differs from a 30-year-history reading by < 0.0001.
+The formula is the one used in the backtest and was checked against it to 1e-14 on SPY/QQQ/IWM/DIA. Treat a reading as ±1 point:
+exactly tied up/down moves are broken by the last digit of the price feed, so Yahoo, Stooq and Tradier can differ slightly.
+
 ## Rules of the road
 
 - Execute at the open with market-on-open orders; skip a trade if you can't.
