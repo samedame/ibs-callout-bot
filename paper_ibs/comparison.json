@@ -1,0 +1,55 @@
+{
+  "accounts": {
+    "original": {
+      "cash": 1500.0,
+      "unsettled": [],
+      "positions": {},
+      "orders": {
+        "buys": [],
+        "sells": []
+      },
+      "peak": 1500.0,
+      "max_drawdown": 0.0,
+      "fills": 0
+    },
+    "cap85": {
+      "cash": 1500.0,
+      "unsettled": [],
+      "positions": {},
+      "orders": {
+        "buys": [],
+        "sells": []
+      },
+      "peak": 1500.0,
+      "max_drawdown": 0.0,
+      "fills": 0
+    }
+  },
+  "history": [
+    {
+      "date": "2026-11-09",
+      "original": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      },
+      "cap85": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      }
+    }
+  ]
+}
