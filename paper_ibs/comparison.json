@@ -50,6 +50,31 @@
         },
         "max_drawdown": 0.0
       }
+    },
+    {
+      "date": "2026-11-10",
+      "original": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      },
+      "cap85": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      }
     }
   ]
 }
