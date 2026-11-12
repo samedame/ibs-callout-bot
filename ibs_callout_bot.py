@@ -9,6 +9,10 @@ Rules (frozen 2026-09-12, from the out-of-sample study):
              -> sell at the NEXT open
   Sizing   : one sleeve per ETF (25% of the bot's capital each), no leverage, no averaging down.
 
+Context only (added 2026-11-08, does NOT change any rule above): each alert also shows ADX(14), +DI and -DI of the
+signal close, and BUY signals store them in state.json (signal_adx / signal_pdi / signal_mdi, carried into `history`) so
+a forward sample can be tested later. See README "ADX context".
+
 The bot only sends alerts; you place the orders (market-on-open works; a limit near the open also works).
 State (which sleeves are open, which orders are still pending) is kept in state.json.
 
@@ -43,6 +47,9 @@ import tradier
 TICKERS = ["SPY", "QQQ", "IWM", "DIA"]
 IBS_ENTRY = 0.10
 MAX_HOLD_DAYS = 10
+ADX_N = 14                      # Wilder period; context only, never part of a rule
+ADX_NOTE_LEVEL = 25             # the level the backtest split on; shown as a label, never a filter
+HISTORY_DAYS = 365              # calendar days of bars to fetch: ~250 sessions, enough for ADX to settle (was 90)
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state.json")
 NOTIFIED_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".notified")   # tells notify_failure.py to stay quiet
 UA = {"User-Agent": "Mozilla/5.0 (compatible; ibs-callout-bot/1.0)"}
@@ -113,7 +120,7 @@ def fmt_day(d):
 
 # ----------------------------------------------------------------------------- data
 
-def fetch_yahoo(ticker, days=90):
+def fetch_yahoo(ticker, days=HISTORY_DAYS):
     """Daily OHLC from Yahoo's chart endpoint (no key needed)."""
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
            f"?range={days}d&interval=1d&events=div,splits")
@@ -127,7 +134,7 @@ def fetch_yahoo(ticker, days=90):
     return df.dropna()
 
 
-def fetch_stooq(ticker, days=90):
+def fetch_stooq(ticker, days=HISTORY_DAYS):
     """Fallback: Stooq daily CSV."""
     url = f"https://stooq.com/q/d/l/?s={ticker.lower()}.us&i=d"
     req = urllib.request.Request(url, headers=UA)
@@ -139,7 +146,7 @@ def fetch_stooq(ticker, days=90):
     return df[["open", "high", "low", "close"]].tail(days + 5)
 
 
-def fetch_tradier(ticker, days=90):
+def fetch_tradier(ticker, days=HISTORY_DAYS):
     """Daily OHLC from Tradier (needs the TRADIER_API_KEY secret; see tradier.py)."""
     return tradier.daily_bars(ticker, days=days)
 
@@ -221,6 +228,58 @@ def ibs(row):
     return 0.5 if rng <= 0 else (row["close"] - row["low"]) / rng
 
 
+def adx_info(df, n=ADX_N):
+    """Wilder ADX(n), +DI and -DI at the newest bar of `df` (columns high/low/close), or None when they cannot be
+    computed (fewer than 2n bars, a non-finite price, or no range at all). Information only: nothing in the trading
+    rules reads this, and any problem here must never stop an alert.
+
+    Same definition as the 2026-11-08 backtest: DM/TR sums are seeded with the first n values then s = s - s/n + x;
+    DX = 100|+DI - -DI| / (+DI + -DI); ADX = mean of the first n DX, then (ADX*(n-1) + DX) / n. A move that is
+    exactly tied (up == down) counts for neither side."""
+    try:
+        if len(df) < 2 * n:
+            return None
+        h, l, c = (df[k].to_numpy(dtype=float) for k in ("high", "low", "close"))
+        if not (pd.notna(h).all() and pd.notna(l).all() and pd.notna(c).all()):
+            return None
+        s_tr = s_p = s_m = 0.0
+        dx, pdi, mdi, adx = [], 0.0, 0.0, None
+        for i in range(1, len(c)):
+            up, dn = h[i] - h[i - 1], l[i - 1] - l[i]
+            pdm = up if (up > dn and up > 0) else 0.0
+            mdm = dn if (dn > up and dn > 0) else 0.0
+            tr = max(h[i] - l[i], abs(h[i] - c[i - 1]), abs(l[i] - c[i - 1]))
+            if i <= n:
+                s_tr += tr; s_p += pdm; s_m += mdm
+                if i < n:
+                    continue
+            else:
+                s_tr += tr - s_tr / n; s_p += pdm - s_p / n; s_m += mdm - s_m / n
+            if s_tr <= 0:
+                return None
+            pdi, mdi = 100.0 * s_p / s_tr, 100.0 * s_m / s_tr
+            den = pdi + mdi
+            d = 100.0 * abs(pdi - mdi) / den if den > 0 else 0.0
+            if adx is None:
+                dx.append(d)
+                if len(dx) == n:
+                    adx = sum(dx) / n
+            else:
+                adx = (adx * (n - 1) + d) / n
+        if adx is None:
+            return None
+        return {"adx": float(adx), "pdi": float(pdi), "mdi": float(mdi)}
+    except Exception:  # noqa
+        return None
+
+
+def adx_label(a):
+    """'ADX 31 (+DI 12, -DI 28)' for an adx_info dict; '' when there is none."""
+    if not a:
+        return ""
+    return f"ADX {a['adx']:.0f} (+DI {a['pdi']:.0f}, -DI {a['mdi']:.0f})"
+
+
 def held_bars(df, entry_date):
     """Trading days held so far: bars dated AFTER the signal bar (`entry_date`; the buy is at the next open)."""
     e = dt.date.fromisoformat(entry_date)
@@ -298,6 +357,7 @@ def evaluate(state, bars, expected):
         last, prev = df.iloc[-1], df.iloc[-2]
         v = ibs(last)
         close = float(last["close"])
+        a = adx_info(df)                # context only; never read by the signal logic below
         pos = state["positions"].get(t)
         held = signal = None
         if pos:
@@ -309,8 +369,8 @@ def evaluate(state, bars, expected):
                               "why": "close above yesterday's high" if above else f"{held} trading days held"})
         elif v < IBS_ENTRY:
             signal = "BUY"
-            buys.append({"sym": t, "ibs": v, "close": close})
-        rows.append({"sym": t, "close": close, "ibs": v, "in_position": bool(pos), "held": held, "signal": signal})
+            buys.append({"sym": t, "ibs": v, "close": close, "adx": a})
+        rows.append({"sym": t, "close": close, "ibs": v, "in_position": bool(pos), "held": held, "signal": signal, "adx": a})
     return {"bar": expected.isoformat(), "rows": rows, "buys": buys, "sells": sells}
 
 
@@ -331,7 +391,11 @@ def apply_changes(state, ev):
         state.setdefault("pending_exits", {})[s["sym"]] = {"why": s["why"], "signal_bar": b,
                                                           "entry_date": s["entry_date"], "held": s["held"]}
     for x in ev["buys"]:
-        state["positions"][x["sym"]] = {"entry_date": b, "signal_ibs": round(x["ibs"], 4), "bars": 0, "pending": True}
+        pos = {"entry_date": b, "signal_ibs": round(x["ibs"], 4), "bars": 0, "pending": True}
+        a = x.get("adx")
+        if a:                           # forward-test log (context only): ADX at the signal close
+            pos.update(signal_adx=round(a["adx"], 2), signal_pdi=round(a["pdi"], 2), signal_mdi=round(a["mdi"], 2))
+        state["positions"][x["sym"]] = pos
     state["last_bar"] = b
 
 
@@ -346,7 +410,8 @@ def render_evening(ev, expected, now, notes=()):
     if ev["buys"]:
         out.append(f"\n__BUY at the {when}__ (market-on-open, 25% of the bot's capital per ETF):")
         for x in ev["buys"]:
-            out.append(f"• **{x['sym']}** — IBS {x['ibs']:.2f}, close {x['close']:.2f}")
+            a = adx_label(x.get("adx"))
+            out.append(f"• **{x['sym']}** — IBS {x['ibs']:.2f}, close {x['close']:.2f}" + (f", {a}" if a else ""))
     if ev["sells"]:
         out.append(f"\n__SELL at the {when}__ (market-on-open, the whole position):")
         for s in ev["sells"]:
@@ -361,8 +426,13 @@ def render_evening(ev, expected, now, notes=()):
         tag = {"BUY": "  [BUY signal]", "SELL": "  [SELL signal]"}.get(r["signal"])
         if tag is None and r["in_position"]:
             tag = f"  [in position, held {r['held']}/{MAX_HOLD_DAYS} days]"
-        table.append(f"{r['sym']}: close {r['close']:.2f}  IBS {r['ibs']:.2f}" + (tag or ""))
+        a = r.get("adx")
+        table.append(f"{r['sym']}: close {r['close']:.2f}  IBS {r['ibs']:.2f}" + (tag or "")
+                     + (f"  | ADX {a['adx']:.0f} +DI {a['pdi']:.0f} -DI {a['mdi']:.0f}" if a else ""))
     out.append("\n```\n" + "\n".join(table) + "\n```")
+    if any(x.get("adx") for x in ev["buys"]):
+        out.append(f"ADX is context only, not a filter: take every BUY. In the 1998-2026 backtest BUYs with ADX ≥ "
+                   f"{ADX_NOTE_LEVEL} averaged +0.85% vs +0.30% below it, but skipping or resizing on ADX did not pass testing.")
     return "\n".join(out)
 
 
@@ -399,7 +469,9 @@ def render_morning(state, now):
                               for t, v in sells.items()))
     if buys:
         out.append("**BUY at the open** (market-on-open, 25% of the bot's capital per ETF): " +
-                   ", ".join(f"**{t}**" for t in buys))
+                   ", ".join(f"**{t}**" + (f" (ADX {state['positions'][t]['signal_adx']:.0f})"
+                                           if state["positions"][t].get("signal_adx") is not None else "")
+                             for t in buys))
     if not sells and not buys:
         out.append("No orders today.")
     if hold:
