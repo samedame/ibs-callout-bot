@@ -5,7 +5,10 @@
       "unsettled": [],
       "positions": {},
       "orders": {
-        "buys": [],
+        "buys": [
+          "IWM",
+          "DIA"
+        ],
         "sells": []
       },
       "peak": 1500.0,
@@ -17,7 +20,10 @@
       "unsettled": [],
       "positions": {},
       "orders": {
-        "buys": [],
+        "buys": [
+          "IWM",
+          "DIA"
+        ],
         "sells": []
       },
       "peak": 1500.0,
@@ -96,6 +102,37 @@
         "skipped": [],
         "next_open": {
           "buys": [],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "original": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [
+            "IWM",
+            "DIA"
+          ],
+          "sells": []
+        },
+        "max_drawdown": 0.0
+      },
+      "cap85": {
+        "equity": 1500.0,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [
+            "IWM",
+            "DIA"
+          ],
           "sells": []
         },
         "max_drawdown": 0.0
