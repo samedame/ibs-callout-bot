@@ -4,13 +4,13 @@
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0962,
    "bars": 0,
-   "pending": true
+   "pending": false
   },
   "DIA": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0498,
    "bars": 0,
-   "pending": true
+   "pending": false
   }
  },
  "history": [
