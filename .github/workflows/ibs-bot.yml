@@ -4,10 +4,11 @@ on:
   schedule:
     # Evening signal run (unchanged).
     - cron: '15 21 * * 1-5'
-    # BACKUP for the pre-open reminder. The primary trigger is the open-scheduler Worker (09:00 ET, exact).
-    # These fire at 09:07 ET and are silenced by run_guard.py if the Worker already ran (or if off-season).
-    - cron: '7 13 * * 1-5'   # 09:07 EDT (UTC-4)
-    - cron: '7 14 * * 1-5'   # 09:07 EST (UTC-5)
+    # ONE backup for the pre-open reminder (one trigger per job, 2026-11-13). The primary trigger is the open-scheduler
+    # Worker (09:00 ET, exact). 14:07 UTC is 09:07 ET in winter and 10:07 ET in summer; run_guard.py stays silent if the
+    # Worker already ran and posts one "missed window" notice if it did not, so the backup doubles as the dead-Worker
+    # alarm. The 13:07 UTC line (08:07 ET in winter, always too early) was removed.
+    - cron: '7 14 * * 1-5'
   workflow_dispatch:
     inputs:
       mode:
@@ -54,7 +55,7 @@ jobs:
       # Replaces the old "Check pre-open staleness" + "stale" curl steps. run_guard.py does the lateness
       # check against the INTENDED time, suppresses duplicates, and posts one clear notice if too late.
       - name: Pre-open reminder (guarded)
-        if: github.event.schedule == '7 13 * * 1-5' || github.event.schedule == '7 14 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'morning')
+        if: github.event.schedule == '7 14 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'morning')
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
