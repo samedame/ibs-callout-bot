@@ -1,34 +1,46 @@
 {
   "accounts": {
     "original": {
-      "cash": 1500.0,
+      "cash": 750.0,
       "unsettled": [],
-      "positions": {},
+      "positions": {
+        "IWM": {
+          "entry_date": "2026-11-12",
+          "shares": 1.343655112755506
+        },
+        "DIA": {
+          "entry_date": "2026-11-12",
+          "shares": 0.71416000172084
+        }
+      },
       "orders": {
-        "buys": [
-          "IWM",
-          "DIA"
-        ],
+        "buys": [],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": 0.0,
-      "fills": 0
+      "max_drawdown": -0.0023127700703862164,
+      "fills": 2
     },
     "cap85": {
-      "cash": 1500.0,
+      "cash": 750.0,
       "unsettled": [],
-      "positions": {},
+      "positions": {
+        "IWM": {
+          "entry_date": "2026-11-12",
+          "shares": 1.343655112755506
+        },
+        "DIA": {
+          "entry_date": "2026-11-12",
+          "shares": 0.71416000172084
+        }
+      },
       "orders": {
-        "buys": [
-          "IWM",
-          "DIA"
-        ],
+        "buys": [],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": 0.0,
-      "fills": 0
+      "max_drawdown": -0.0023127700703862164,
+      "fills": 2
     }
   },
   "history": [
@@ -136,6 +148,57 @@
           "sells": []
         },
         "max_drawdown": 0.0
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "original": {
+        "equity": 1496.5308448944206,
+        "exposure": 0.4988409343123749,
+        "fills": [
+          {
+            "side": "buy",
+            "ticker": "IWM",
+            "price": 279.089475,
+            "amount": 375.0
+          },
+          {
+            "side": "buy",
+            "ticker": "DIA",
+            "price": 525.092415,
+            "amount": 375.0
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.0023127700703862164
+      },
+      "cap85": {
+        "equity": 1496.5308448944206,
+        "exposure": 0.4988409343123749,
+        "fills": [
+          {
+            "side": "buy",
+            "ticker": "IWM",
+            "price": 279.089475,
+            "amount": 375.0
+          },
+          {
+            "side": "buy",
+            "ticker": "DIA",
+            "price": 525.092415,
+            "amount": 375.0
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.0023127700703862164
       }
     }
   ]
