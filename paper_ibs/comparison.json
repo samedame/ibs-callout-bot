@@ -18,7 +18,7 @@
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.009989829224739566,
+      "max_drawdown": -0.017459387626754475,
       "fills": 2
     },
     "cap85": {
@@ -39,7 +39,7 @@
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.009989829224739566,
+      "max_drawdown": -0.017459387626754475,
       "fills": 2
     }
   },
@@ -224,6 +224,31 @@
           "sells": []
         },
         "max_drawdown": -0.009989829224739566
+      }
+    },
+    {
+      "date": "2026-11-17",
+      "original": {
+        "equity": 1473.8109185598682,
+        "exposure": 0.49111518271769816,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.017459387626754475
+      },
+      "cap85": {
+        "equity": 1473.8109185598682,
+        "exposure": 0.49111518271769816,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.017459387626754475
       }
     }
   ]
