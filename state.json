@@ -3,16 +3,16 @@
   "IWM": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0962,
-   "bars": 3,
+   "bars": 4,
    "pending": false,
-   "last_bar": "2026-11-17"
+   "last_bar": "2026-11-18"
   },
   "DIA": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0498,
-   "bars": 3,
+   "bars": 4,
    "pending": false,
-   "last_bar": "2026-11-17"
+   "last_bar": "2026-11-18"
   }
  },
  "history": [
@@ -178,9 +178,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-11-17",
+ "last_bar": "2026-11-18",
  "last_evening": {
-  "bar": "2026-11-17",
-  "text": "**IBS callout bot \u2014 signals from the Tue Nov 17 close**\n\nNo action at the Wed Nov 18 open.\n\n```\nSPY: close 732.44  IBS 0.43\nQQQ: close 656.95  IBS 0.62\nIWM: close 269.05  IBS 0.23  [in position, held 3/10 days]\nDIA: close 507.31  IBS 0.22  [in position, held 3/10 days]\n```"
+  "bar": "2026-11-18",
+  "text": "**IBS callout bot \u2014 signals from the Wed Nov 18 close**\n\nNo action at the Thu Nov 19 open.\n\n```\nSPY: close 730.20  IBS 0.41\nQQQ: close 659.51  IBS 0.66\nIWM: close 270.12  IBS 0.50  [in position, held 4/10 days]\nDIA: close 501.73  IBS 0.27  [in position, held 4/10 days]\n```"
  }
 }
