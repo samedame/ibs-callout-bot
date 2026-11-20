@@ -3,16 +3,28 @@
   "IWM": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0962,
-   "bars": 4,
+   "bars": 5,
    "pending": false,
-   "last_bar": "2026-11-18"
+   "last_bar": "2026-11-19"
   },
   "DIA": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0498,
-   "bars": 4,
+   "bars": 5,
    "pending": false,
-   "last_bar": "2026-11-18"
+   "last_bar": "2026-11-19"
+  },
+  "SPY": {
+   "entry_date": "2026-11-19",
+   "signal_ibs": 0.0091,
+   "bars": 0,
+   "pending": true
+  },
+  "QQQ": {
+   "entry_date": "2026-11-19",
+   "signal_ibs": 0.0218,
+   "bars": 0,
+   "pending": true
   }
  },
  "history": [
@@ -178,9 +190,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-11-18",
+ "last_bar": "2026-11-19",
  "last_evening": {
-  "bar": "2026-11-18",
-  "text": "**IBS callout bot \u2014 signals from the Wed Nov 18 close**\n\nNo action at the Thu Nov 19 open.\n\n```\nSPY: close 730.20  IBS 0.41\nQQQ: close 659.51  IBS 0.66\nIWM: close 270.12  IBS 0.50  [in position, held 4/10 days]\nDIA: close 501.73  IBS 0.27  [in position, held 4/10 days]\n```"
+  "bar": "2026-11-19",
+  "text": "**IBS callout bot \u2014 signals from the Thu Nov 19 close**\n\n__BUY at the Fri Nov 20 open__ (market-on-open, 25% of the bot's capital per ETF):\n\u2022 **SPY** \u2014 IBS 0.01, close 715.87\n\u2022 **QQQ** \u2014 IBS 0.02, close 645.04\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Fri Nov 20.\n\n```\nSPY: close 715.87  IBS 0.01  [BUY signal]\nQQQ: close 645.04  IBS 0.02  [BUY signal]\nIWM: close 264.22  IBS 0.06  [in position, held 5/10 days]\nDIA: close 490.79  IBS 0.00  [in position, held 5/10 days]\n```"
  }
 }
