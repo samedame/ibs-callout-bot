@@ -14,11 +14,14 @@
         }
       },
       "orders": {
-        "buys": [],
+        "buys": [
+          "SPY",
+          "QQQ"
+        ],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.019157588852723784,
+      "max_drawdown": -0.02965123924211277,
       "fills": 2
     },
     "cap85": {
@@ -35,11 +38,14 @@
         }
       },
       "orders": {
-        "buys": [],
+        "buys": [
+          "SPY",
+          "QQQ"
+        ],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.019157588852723784,
+      "max_drawdown": -0.02965123924211277,
       "fills": 2
     }
   },
@@ -274,6 +280,37 @@
           "sells": []
         },
         "max_drawdown": -0.019157588852723784
+      }
+    },
+    {
+      "date": "2026-11-19",
+      "original": {
+        "equity": 1455.5231411368309,
+        "exposure": 0.48472134945637807,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [
+            "SPY",
+            "QQQ"
+          ],
+          "sells": []
+        },
+        "max_drawdown": -0.02965123924211277
+      },
+      "cap85": {
+        "equity": 1455.5231411368309,
+        "exposure": 0.48472134945637807,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [
+            "SPY",
+            "QQQ"
+          ],
+          "sells": []
+        },
+        "max_drawdown": -0.02965123924211277
       }
     }
   ]
