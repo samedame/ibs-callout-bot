@@ -18,13 +18,13 @@
    "entry_date": "2026-11-19",
    "signal_ibs": 0.0091,
    "bars": 0,
-   "pending": true
+   "pending": false
   },
   "QQQ": {
    "entry_date": "2026-11-19",
    "signal_ibs": 0.0218,
    "bars": 0,
-   "pending": true
+   "pending": false
   }
  },
  "history": [
