@@ -1,7 +1,7 @@
 {
   "accounts": {
     "original": {
-      "cash": 750.0,
+      "cash": 22.238429431584564,
       "unsettled": [],
       "positions": {
         "IWM": {
@@ -11,21 +11,26 @@
         "DIA": {
           "entry_date": "2026-11-12",
           "shares": 0.71416000172084
+        },
+        "SPY": {
+          "entry_date": "2026-11-19",
+          "shares": 0.5096963616462521
+        },
+        "QQQ": {
+          "entry_date": "2026-11-19",
+          "shares": 0.5693114642419066
         }
       },
       "orders": {
-        "buys": [
-          "SPY",
-          "QQQ"
-        ],
+        "buys": [],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.02965123924211277,
-      "fills": 2
+      "max_drawdown": -0.060937953874116046,
+      "fills": 4
     },
     "cap85": {
-      "cash": 750.0,
+      "cash": 218.0643528942843,
       "unsettled": [],
       "positions": {
         "IWM": {
@@ -35,18 +40,23 @@
         "DIA": {
           "entry_date": "2026-11-12",
           "shares": 0.71416000172084
+        },
+        "SPY": {
+          "entry_date": "2026-11-19",
+          "shares": 0.3725473766744324
+        },
+        "QQQ": {
+          "entry_date": "2026-11-19",
+          "shares": 0.41612126056572535
         }
       },
       "orders": {
-        "buys": [
-          "SPY",
-          "QQQ"
-        ],
+        "buys": [],
         "sells": []
       },
       "peak": 1500.0,
-      "max_drawdown": -0.02965123924211277,
-      "fills": 2
+      "max_drawdown": -0.05559755206577177,
+      "fills": 4
     }
   },
   "history": [
@@ -311,6 +321,57 @@
           "sells": []
         },
         "max_drawdown": -0.02965123924211277
+      }
+    },
+    {
+      "date": "2026-11-20",
+      "original": {
+        "equity": 1408.593069188826,
+        "exposure": 0.9842123109093592,
+        "fills": [
+          {
+            "side": "buy",
+            "ticker": "SPY",
+            "price": 713.9167799999999,
+            "amount": 363.8807852842077
+          },
+          {
+            "side": "buy",
+            "ticker": "QQQ",
+            "price": 639.15942,
+            "amount": 363.8807852842077
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.060937953874116046
+      },
+      "cap85": {
+        "equity": 1416.6036719013423,
+        "exposure": 0.8460653764919287,
+        "fills": [
+          {
+            "side": "buy",
+            "ticker": "SPY",
+            "price": 713.9167799999999,
+            "amount": 265.96782355285785
+          },
+          {
+            "side": "buy",
+            "ticker": "QQQ",
+            "price": 639.15942,
+            "amount": 265.96782355285785
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.05559755206577177
       }
     }
   ]
