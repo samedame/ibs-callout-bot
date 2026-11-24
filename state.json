@@ -3,30 +3,9 @@
   "IWM": {
    "entry_date": "2026-11-12",
    "signal_ibs": 0.0962,
-   "bars": 6,
+   "bars": 7,
    "pending": false,
-   "last_bar": "2026-11-20"
-  },
-  "DIA": {
-   "entry_date": "2026-11-12",
-   "signal_ibs": 0.0498,
-   "bars": 6,
-   "pending": false,
-   "last_bar": "2026-11-20"
-  },
-  "SPY": {
-   "entry_date": "2026-11-19",
-   "signal_ibs": 0.0091,
-   "bars": 1,
-   "pending": false,
-   "last_bar": "2026-11-20"
-  },
-  "QQQ": {
-   "entry_date": "2026-11-19",
-   "signal_ibs": 0.0218,
-   "bars": 1,
-   "pending": false,
-   "last_bar": "2026-11-20"
+   "last_bar": "2026-11-23"
   }
  },
  "history": [
@@ -189,12 +168,61 @@
    "sym": "DIA",
    "exit_signal_date": "2026-11-09",
    "reason": "close above yesterday's high"
+  },
+  {
+   "entry_date": "2026-11-19",
+   "signal_ibs": 0.0091,
+   "bars": 2,
+   "pending": false,
+   "last_bar": "2026-11-23",
+   "sym": "SPY",
+   "exit_signal_date": "2026-11-23",
+   "reason": "close above yesterday's high"
+  },
+  {
+   "entry_date": "2026-11-19",
+   "signal_ibs": 0.0218,
+   "bars": 2,
+   "pending": false,
+   "last_bar": "2026-11-23",
+   "sym": "QQQ",
+   "exit_signal_date": "2026-11-23",
+   "reason": "close above yesterday's high"
+  },
+  {
+   "entry_date": "2026-11-12",
+   "signal_ibs": 0.0498,
+   "bars": 7,
+   "pending": false,
+   "last_bar": "2026-11-23",
+   "sym": "DIA",
+   "exit_signal_date": "2026-11-23",
+   "reason": "close above yesterday's high"
   }
  ],
- "pending_exits": {},
- "last_bar": "2026-11-20",
+ "pending_exits": {
+  "SPY": {
+   "why": "close above yesterday's high",
+   "signal_bar": "2026-11-23",
+   "entry_date": "2026-11-19",
+   "held": 2
+  },
+  "QQQ": {
+   "why": "close above yesterday's high",
+   "signal_bar": "2026-11-23",
+   "entry_date": "2026-11-19",
+   "held": 2
+  },
+  "DIA": {
+   "why": "close above yesterday's high",
+   "signal_bar": "2026-11-23",
+   "entry_date": "2026-11-12",
+   "held": 7
+  }
+ },
+ "last_bar": "2026-11-23",
  "last_evening": {
-  "bar": "2026-11-20",
-  "text": "**IBS callout bot \u2014 signals from the Fri Nov 20 close**\n\nNo action at the Mon Nov 23 open.\n\n```\nSPY: close 689.81  IBS 0.10  [in position, held 1/10 days]\nQQQ: close 608.45  IBS 0.06  [in position, held 1/10 days]\nIWM: close 256.61  IBS 0.03  [in position, held 6/10 days]\nDIA: close 481.08  IBS 0.11  [in position, held 6/10 days]\n```"
+  "bar": "2026-11-23",
+  "text": "**IBS callout bot \u2014 signals from the Mon Nov 23 close**\n\n__SELL at the Tue Nov 24 open__ (market-on-open, the whole position):\n\u2022 **SPY** \u2014 close above yesterday's high (bought at the Fri Nov 20 open, held 2 days)\n\u2022 **QQQ** \u2014 close above yesterday's high (bought at the Fri Nov 20 open, held 2 days)\n\u2022 **DIA** \u2014 close above yesterday's high (bought at the Fri Nov 13 open, held 7 days)\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Tue Nov 24.\n\n```\nSPY: close 722.29  IBS 0.61  [SELL signal]\nQQQ: close 651.03  IBS 0.58  [SELL signal]\nIWM: close 265.74  IBS 0.89  [in position, held 7/10 days]\nDIA: close 495.80  IBS 0.77  [SELL signal]\n```"
  }
 }
