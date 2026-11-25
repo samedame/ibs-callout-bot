@@ -2,69 +2,67 @@
   "accounts": {
     "original": {
       "cash": 22.238429431584564,
-      "unsettled": [],
+      "unsettled": [
+        {
+          "date": "2026-11-25",
+          "amount": 364.3260794717746
+        },
+        {
+          "date": "2026-11-25",
+          "amount": 364.19991851860317
+        },
+        {
+          "date": "2026-11-25",
+          "amount": 352.2902939856788
+        }
+      ],
       "positions": {
         "IWM": {
           "entry_date": "2026-11-12",
           "shares": 1.343655112755506
-        },
-        "DIA": {
-          "entry_date": "2026-11-12",
-          "shares": 0.71416000172084
-        },
-        "SPY": {
-          "entry_date": "2026-11-19",
-          "shares": 0.5096963616462521
-        },
-        "QQQ": {
-          "entry_date": "2026-11-19",
-          "shares": 0.5693114642419066
         }
       },
       "orders": {
         "buys": [],
         "sells": [
-          "SPY",
-          "QQQ",
-          "DIA"
+          "IWM"
         ]
       },
       "peak": 1500.0,
       "max_drawdown": -0.060937953874116046,
-      "fills": 4
+      "fills": 7
     },
     "cap85": {
       "cash": 218.0643528942843,
-      "unsettled": [],
+      "unsettled": [
+        {
+          "date": "2026-11-25",
+          "amount": 266.2932980783
+        },
+        {
+          "date": "2026-11-25",
+          "amount": 266.2010844866806
+        },
+        {
+          "date": "2026-11-25",
+          "amount": 352.2902939856788
+        }
+      ],
       "positions": {
         "IWM": {
           "entry_date": "2026-11-12",
           "shares": 1.343655112755506
-        },
-        "DIA": {
-          "entry_date": "2026-11-12",
-          "shares": 0.71416000172084
-        },
-        "SPY": {
-          "entry_date": "2026-11-19",
-          "shares": 0.3725473766744324
-        },
-        "QQQ": {
-          "entry_date": "2026-11-19",
-          "shares": 0.41612126056572535
         }
       },
       "orders": {
         "buys": [],
         "sells": [
-          "SPY",
-          "QQQ",
-          "DIA"
+          "IWM"
         ]
       },
       "peak": 1500.0,
       "max_drawdown": -0.05559755206577177,
-      "fills": 4
+      "fills": 7
     }
   },
   "history": [
@@ -410,6 +408,73 @@
             "SPY",
             "QQQ",
             "DIA"
+          ]
+        },
+        "max_drawdown": -0.05559755206577177
+      }
+    },
+    {
+      "date": "2026-11-24",
+      "original": {
+        "equity": 1461.9987482291472,
+        "exposure": 0.24551596043175722,
+        "fills": [
+          {
+            "side": "sell",
+            "ticker": "SPY",
+            "price": 714.790426,
+            "amount": 364.3260794717746
+          },
+          {
+            "side": "sell",
+            "ticker": "QQQ",
+            "price": 639.71998,
+            "amount": 364.19991851860317
+          },
+          {
+            "side": "sell",
+            "ticker": "DIA",
+            "price": 493.29323000000005,
+            "amount": 352.2902939856788
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": [
+            "IWM"
+          ]
+        },
+        "max_drawdown": -0.060937953874116046
+      },
+      "cap85": {
+        "equity": 1461.7930562664496,
+        "exposure": 0.2455505074967869,
+        "fills": [
+          {
+            "side": "sell",
+            "ticker": "SPY",
+            "price": 714.790426,
+            "amount": 266.2932980783
+          },
+          {
+            "side": "sell",
+            "ticker": "QQQ",
+            "price": 639.71998,
+            "amount": 266.2010844866806
+          },
+          {
+            "side": "sell",
+            "ticker": "DIA",
+            "price": 493.29323000000005,
+            "amount": 352.2902939856788
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": [
+            "IWM"
           ]
         },
         "max_drawdown": -0.05559755206577177
