@@ -203,9 +203,9 @@
   }
  ],
  "pending_exits": {},
- "last_bar": "2026-11-24",
+ "last_bar": "2026-11-25",
  "last_evening": {
-  "bar": "2026-11-24",
-  "text": "**IBS callout bot \u2014 signals from the Tue Nov 24 close**\n\n__SELL at the Wed Nov 25 open__ (market-on-open, the whole position):\n\u2022 **IWM** \u2014 close above yesterday's high (bought at the Fri Nov 13 open, held 8 days)\n\nA reminder with these orders posts at 9:00 AM ET (7:00 AM MT) on Wed Nov 25.\n\n```\nSPY: close 718.78  IBS 0.76\nQQQ: close 638.10  IBS 0.41\nIWM: close 267.14  IBS 0.73  [SELL signal]\nDIA: close 499.74  IBS 0.93\n```"
+  "bar": "2026-11-25",
+  "text": "**IBS callout bot \u2014 signals from the Wed Nov 25 close**\n\nNo action at the Fri Nov 27 open.\n\n```\nSPY: close 716.70  IBS 0.92\nQQQ: close 633.93  IBS 0.96\nIWM: close 268.87  IBS 0.90\nDIA: close 501.27  IBS 0.86\n```"
  }
 }
