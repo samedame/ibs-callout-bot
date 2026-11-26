@@ -1,68 +1,38 @@
 {
   "accounts": {
     "original": {
-      "cash": 22.238429431584564,
+      "cash": 1103.0547214076412,
       "unsettled": [
         {
-          "date": "2026-11-25",
-          "amount": 364.3260794717746
-        },
-        {
-          "date": "2026-11-25",
-          "amount": 364.19991851860317
-        },
-        {
-          "date": "2026-11-25",
-          "amount": 352.2902939856788
+          "date": "2026-11-27",
+          "amount": 353.51349016296655
         }
       ],
-      "positions": {
-        "IWM": {
-          "entry_date": "2026-11-12",
-          "shares": 1.343655112755506
-        }
-      },
+      "positions": {},
       "orders": {
         "buys": [],
-        "sells": [
-          "IWM"
-        ]
+        "sells": []
       },
       "peak": 1500.0,
       "max_drawdown": -0.060937953874116046,
-      "fills": 7
+      "fills": 8
     },
     "cap85": {
-      "cash": 218.0643528942843,
+      "cash": 1102.8490294449437,
       "unsettled": [
         {
-          "date": "2026-11-25",
-          "amount": 266.2932980783
-        },
-        {
-          "date": "2026-11-25",
-          "amount": 266.2010844866806
-        },
-        {
-          "date": "2026-11-25",
-          "amount": 352.2902939856788
+          "date": "2026-11-27",
+          "amount": 353.51349016296655
         }
       ],
-      "positions": {
-        "IWM": {
-          "entry_date": "2026-11-12",
-          "shares": 1.343655112755506
-        }
-      },
+      "positions": {},
       "orders": {
         "buys": [],
-        "sells": [
-          "IWM"
-        ]
+        "sells": []
       },
       "peak": 1500.0,
       "max_drawdown": -0.05559755206577177,
-      "fills": 7
+      "fills": 8
     }
   },
   "history": [
@@ -476,6 +446,45 @@
           "sells": [
             "IWM"
           ]
+        },
+        "max_drawdown": -0.05559755206577177
+      }
+    },
+    {
+      "date": "2026-11-25",
+      "original": {
+        "equity": 1456.5682115706077,
+        "exposure": 0.0,
+        "fills": [
+          {
+            "side": "sell",
+            "ticker": "IWM",
+            "price": 263.098385,
+            "amount": 353.51349016296655
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.060937953874116046
+      },
+      "cap85": {
+        "equity": 1456.3625196079101,
+        "exposure": 0.0,
+        "fills": [
+          {
+            "side": "sell",
+            "ticker": "IWM",
+            "price": 263.098385,
+            "amount": 353.51349016296655
+          }
+        ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
         },
         "max_drawdown": -0.05559755206577177
       }
