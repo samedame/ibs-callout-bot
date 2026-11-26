@@ -1,10 +1,4 @@
 {
- "ibs-preopen:2026-11-11": {
-  "done_at": "2026-11-11T09:00:32-05:00",
-  "late_min": 0.5,
-  "status": "on_time",
-  "trigger": "cf-scheduler"
- },
  "ibs-preopen:2026-11-12": {
   "done_at": "2026-11-12T09:00:32-05:00",
   "late_min": 0.5,
@@ -64,5 +58,6 @@
   "late_min": 0.6,
   "status": "on_time",
   "trigger": "cf-scheduler"
- }
+ },
+ "ibs-preopen:2026-11-26:notice": "2026-11-26T17:56:55-05:00"
 }
