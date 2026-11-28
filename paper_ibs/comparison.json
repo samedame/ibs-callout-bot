@@ -1,13 +1,8 @@
 {
   "accounts": {
     "original": {
-      "cash": 1103.0547214076412,
-      "unsettled": [
-        {
-          "date": "2026-11-27",
-          "amount": 353.51349016296655
-        }
-      ],
+      "cash": 1456.5682115706077,
+      "unsettled": [],
       "positions": {},
       "orders": {
         "buys": [],
@@ -18,13 +13,8 @@
       "fills": 8
     },
     "cap85": {
-      "cash": 1102.8490294449437,
-      "unsettled": [
-        {
-          "date": "2026-11-27",
-          "amount": 353.51349016296655
-        }
-      ],
+      "cash": 1456.3625196079101,
+      "unsettled": [],
       "positions": {},
       "orders": {
         "buys": [],
@@ -481,6 +471,31 @@
             "amount": 353.51349016296655
           }
         ],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.05559755206577177
+      }
+    },
+    {
+      "date": "2026-11-27",
+      "original": {
+        "equity": 1456.5682115706077,
+        "exposure": 0.0,
+        "fills": [],
+        "skipped": [],
+        "next_open": {
+          "buys": [],
+          "sells": []
+        },
+        "max_drawdown": -0.060937953874116046
+      },
+      "cap85": {
+        "equity": 1456.3625196079101,
+        "exposure": 0.0,
+        "fills": [],
         "skipped": [],
         "next_open": {
           "buys": [],
